@@ -1,0 +1,21 @@
+<%
+  snippet = Decidim::KpiManager::Shortcode.build(item)
+%>
+<div class="column">
+  <div class="card p-3">
+    <div class="card__content">
+      <h3 class="card__title"><%= item["name"] %></h3>
+      <p>
+        <strong><%= item["value"] %> <%= item["unit"] %></strong>
+        <br>
+        <small><%= item["source"] %> &middot; <%= item["recorded_at"] %></small>
+      </p>
+      <div class="input-group">
+        <input type="text" class="input-group-field" readonly value="<%= snippet %>" onclick="this.select();">
+        <button type="button" class="button small secondary input-group-button" data-clipboard-copy="<%= snippet %>">
+          <%= t("decidim.kpi_manager.kpis.index.copy") %>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

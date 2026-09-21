@@ -4,3 +4,11 @@ en:
     components:
       kpi_manager:
         name: KpiManager
+    kpi_manager:
+      kpis:
+        index:
+          title: My KPIs & measures
+          description: Browse your KPIs and measures, then copy the snippet and paste it into a proposal, blog post or any other rich text field to embed it as evidence.
+          kpis: KPIs
+          measures: Measures
+          copy: Copy

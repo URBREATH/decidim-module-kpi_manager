@@ -10,9 +10,12 @@ module Decidim
       isolate_namespace Decidim::KpiManager
 
       routes do
-        # Add engine routes here
-        # resources :kpi_manager
-        # root to: "kpi_manager#index"
+        resources :kpis, only: [:index]
+        root to: "kpis#index"
+      end
+
+      initializer "KpiManager.content_processors" do
+        Decidim.content_processors += [:kpi]
       end
 
       initializer "KpiManager.shakapacker.assets_path" do

@@ -1,0 +1,21 @@
+<% content_for(:title) { t(".title") } %>
+<% append_javascript_pack_tag "decidim_kpi_manager" %>
+
+<div class="layout-content">
+  <h1 class="section-heading"><%= t(".title") %></h1>
+  <p><%= t(".description") %></p>
+
+  <h2 class="section-heading"><%= t(".kpis") %></h2>
+  <div class="row small-up-1 medium-up-2 card-grid">
+    <% @kpis.each do |kpi| %>
+      <%= render "decidim/kpi_manager/kpis/item", item: kpi %>
+    <% end %>
+  </div>
+
+  <h2 class="section-heading"><%= t(".measures") %></h2>
+  <div class="row small-up-1 medium-up-2 card-grid">
+    <% @measures.each do |measure| %>
+      <%= render "decidim/kpi_manager/kpis/item", item: measure %>
+    <% end %>
+  </div>
+</div>

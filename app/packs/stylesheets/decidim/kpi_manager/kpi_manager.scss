@@ -1,1 +1,19 @@
-/* css for decidim_kpi_manager */
+.kpi-manager-embed {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  padding: 0.1em 0.6em;
+  border: 1px solid #ddd;
+  border-radius: 1em;
+  background: #f7f7f7;
+  font-size: 0.9em;
+
+  &__name {
+    font-weight: 600;
+  }
+
+  &__meta {
+    color: #666;
+    font-size: 0.85em;
+  }
+}
