@@ -38,12 +38,12 @@ module Decidim
       end
 
       def find_kpi(id)
-        item = fetch("/kpi/#{id}")
+        item = unwrap(fetch("/kpi/#{id}"))
         item ? normalize(item, "kpi") : demo_kpis(nil).find { |kpi| kpi["id"].to_s == id.to_s }
       end
 
       def find_measure(id)
-        item = fetch("/measures/#{id}")
+        item = unwrap(fetch("/measures/#{id}"))
         item ? normalize(item, "measure") : demo_measures(nil).find { |measure| measure["id"].to_s == id.to_s }
       end
 
@@ -77,26 +77,46 @@ module Decidim
         nil
       end
 
-      # The API's exact response shape is not documented in the Postman
-      # collection (no saved example responses), so this tries a handful of
-      # common key spellings and keeps the raw payload under "raw" for
-      # debugging/future adjustment.
+      UNIT_SYMBOLS = {
+        "CELSIUS" => "°C",
+        "FAHRENHEIT" => "°F",
+        "PERCENT" => "%",
+        "PERCENTAGE" => "%"
+      }.freeze
+
+      # The API wraps results in `{ "message": ..., "data": [...] }` (or a
+      # single object under "data" for by-id requests). KPIs expose
+      # `lastValue`/`lastUpdate` and `definition.unitMeasure`; measures are
+      # assumed to follow the same conventions, with fallbacks for common
+      # alternative key names. The raw payload is kept under "raw".
       def normalize(item, type)
+        unit = item.dig("definition", "unitMeasure") || item["unit"] || item["uom"]
+
         {
           "id" => (item["id"] || item["uuid"] || item["_id"]).to_s,
           "type" => type,
           "name" => item["name"] || item["title"] || item["measurement"],
-          "value" => item["value"] || item["currentValue"] || item.dig("source", "spec", "jsonPath"),
-          "unit" => item["unit"] || item["uom"],
-          "recorded_at" => item["recorded_at"] || item["timestamp"] || item["updatedAt"] || item["createdAt"],
-          "source" => item["context"] || item["source_name"] || "URBREATH KPI Manager",
+          "description" => item["description"],
+          "value" => format_value(item["lastValue"] || item["value"] || item["currentValue"]),
+          "unit" => UNIT_SYMBOLS.fetch(unit.to_s.upcase, unit),
+          "target" => item.dig("definition", "targetValue"),
+          "recorded_at" => (item["lastUpdate"] || item["recorded_at"] || item["timestamp"] || item["updatedAt"]).to_s[0, 10].presence,
+          "source" => item["context"] || "URBREATH KPI Manager",
           "raw" => item
         }
       end
 
-      def normalize_collection(items, type, query)
-        items = items.is_a?(Array) ? items : items["data"] || items["items"] || []
+      def normalize_collection(payload, type, query)
+        items = payload.is_a?(Hash) ? Array(payload["data"] || payload["items"]) : Array(payload)
         filter(items.map { |item| normalize(item, type) }, query)
+      end
+
+      def unwrap(payload)
+        payload.is_a?(Hash) && payload.key?("data") ? payload["data"] : payload
+      end
+
+      def format_value(value)
+        value.is_a?(Float) ? value.round(2).to_s : value&.to_s
       end
 
       def demo_kpis(query)
