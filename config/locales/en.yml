@@ -5,6 +5,8 @@ en:
       kpi_manager:
         name: KpiManager
     kpi_manager:
+      menu:
+        kpi_manager: My KPIs
       kpis:
         index:
           title: My KPIs & measures
