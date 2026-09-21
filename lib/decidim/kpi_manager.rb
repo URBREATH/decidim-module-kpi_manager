@@ -3,6 +3,7 @@
 require "decidim/kpi_manager/engine"
 require "decidim/kpi_manager/shortcode"
 require "decidim/kpi_manager/api_client"
+require "decidim/kpi_manager/rich_text_extension"
 require "decidim/content_parsers/kpi_parser"
 require "decidim/content_renderers/kpi_renderer"
 require "decidim/kpi_manager/admin"

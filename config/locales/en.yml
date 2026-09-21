@@ -7,6 +7,12 @@ en:
     kpi_manager:
       menu:
         kpi_manager: My KPIs
+      editor:
+        button: KPI
+        title: Insert a KPI or measure
+        search: Search…
+        empty: No KPIs found.
+        error: Could not load your KPIs.
       kpis:
         index:
           title: My KPIs & measures
@@ -14,3 +20,10 @@ en:
           kpis: KPIs
           measures: Measures
           copy: Copy
+          copied: Copied!
+          copied_message: The KPI snippet was copied to the clipboard.
+          empty: Nothing to show here yet.
+          name: Name
+          value: Value
+          source: Source
+          updated: Updated

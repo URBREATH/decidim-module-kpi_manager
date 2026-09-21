@@ -21,7 +21,7 @@ module Decidim
       end
 
       def self.escape(value)
-        value.gsub('"', "&quot;")
+        value.tr('"', "'").delete("[]")
       end
     end
   end

@@ -24,6 +24,13 @@ module Decidim
         end
       end
 
+      # Rich text written by admins (e.g. blog posts) is displayed through
+      # `decidim_rich_text` without going through Decidim.content_processors,
+      # so expand the [[kpi ...]] shortcodes there too.
+      config.to_prepare do
+        Decidim::SanitizeHelper.prepend(Decidim::KpiManager::RichTextExtension)
+      end
+
       initializer "KpiManager.content_processors" do
         Decidim.content_processors += [:kpi]
       end

@@ -1,19 +1,65 @@
 .kpi-manager-embed {
   display: inline-flex;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 0.4em;
-  padding: 0.1em 0.6em;
-  border: 1px solid #ddd;
-  border-radius: 1em;
-  background: #f7f7f7;
+  padding: 0.15em 0.75em;
+  border: 1px solid #d5d9e0;
+  border-radius: 999px;
+  background: #f5f7fa;
   font-size: 0.9em;
+  line-height: 1.5;
 
-  &__name {
-    font-weight: 600;
+  &__name { font-weight: 600; }
+  &__value { color: #0b5cad; font-weight: 600; }
+  &__meta { color: #667; font-size: 0.85em; }
+}
+
+.kpi-manager-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+
+  th, td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: middle;
   }
 
-  &__meta {
-    color: #666;
-    font-size: 0.85em;
+  th { font-weight: 600; color: #667; font-size: 0.8rem; text-transform: uppercase; }
+  &__name { font-weight: 600; }
+  &__value { white-space: nowrap; }
+}
+
+.kpi-manager-picker {
+  position: absolute;
+  z-index: 50;
+  width: min(28rem, 92vw);
+  max-height: 20rem;
+  overflow: auto;
+  padding: 0.5rem;
+  border: 1px solid #d5d9e0;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 15%);
+
+  &__search { width: 100%; margin-bottom: 0.5rem; }
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    border: 0;
+    border-radius: 0.25rem;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover, &:focus { background: #eef3fb; }
   }
+  &__value { color: #0b5cad; font-weight: 600; white-space: nowrap; }
+  &__meta { display: block; color: #667; font-size: 0.8rem; }
+  &__empty { padding: 0.5rem; color: #667; }
 }

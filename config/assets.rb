@@ -7,3 +7,5 @@ Decidim::Shakapacker.register_entrypoints(
   decidim_kpi_manager: "#{base_path}/app/packs/entrypoints/decidim_kpi_manager.js"
 )
 Decidim::Shakapacker.register_stylesheet_import("stylesheets/decidim/kpi_manager/kpi_manager")
+
+Decidim::Shakapacker.register_stylesheet_import("stylesheets/decidim/kpi_manager/kpi_manager", group: :admin)

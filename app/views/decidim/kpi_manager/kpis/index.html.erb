@@ -1,21 +1,45 @@
-<% content_for(:title) { t(".title") } %>
-<% append_javascript_pack_tag "decidim_kpi_manager" %>
+<% add_decidim_page_title(t(".title")) %>
 
-<div class="layout-content">
-  <h1 class="section-heading"><%= t(".title") %></h1>
-  <p><%= t(".description") %></p>
+<%= render layout: "layouts/decidim/shared/layout_center", locals: { columns: 10 } do %>
+  <h1 class="title-decorator inline-block text-left mb-4"><%= t(".title") %></h1>
+  <p class="text-gray-2 mb-8"><%= t(".description") %></p>
 
-  <h2 class="section-heading"><%= t(".kpis") %></h2>
-  <div class="row small-up-1 medium-up-2 card-grid">
-    <% @kpis.each do |kpi| %>
-      <%= render "decidim/kpi_manager/kpis/item", item: kpi %>
+  <% { t(".kpis") => @kpis, t(".measures") => @measures }.each do |heading, items| %>
+    <h2 class="h4 mt-8 mb-3"><%= heading %></h2>
+    <% if items.empty? %>
+      <p class="text-gray-2"><%= t(".empty") %></p>
+    <% else %>
+      <table class="kpi-manager-table">
+        <thead>
+          <tr>
+            <th><%= t(".name") %></th>
+            <th><%= t(".value") %></th>
+            <th><%= t(".source") %></th>
+            <th><%= t(".updated") %></th>
+            <th><span class="sr-only"><%= t(".copy") %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.each do |item| %>
+            <tr>
+              <td class="kpi-manager-table__name"><%= item["name"] %></td>
+              <td class="kpi-manager-table__value"><%= item["value"] %> <%= item["unit"] %></td>
+              <td><%= item["source"] %></td>
+              <td><%= item["recorded_at"] %></td>
+              <td class="text-right">
+                <button type="button"
+                        id="kpi-copy-<%= item["type"] %>-<%= item["id"] %>"
+                        class="button button__sm button__transparent-secondary"
+                        data-controller="clipboard-copy"
+                        data-clipboard-copy="#kpi-copy-<%= item["type"] %>-<%= item["id"] %>"
+                        data-clipboard-content="<%= Decidim::KpiManager::Shortcode.build(item) %>"
+                        data-clipboard-copy-label="<%= t(".copied") %>"
+                        data-clipboard-copy-message="<%= t(".copied_message") %>"><%= t(".copy") %></button>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     <% end %>
-  </div>
-
-  <h2 class="section-heading"><%= t(".measures") %></h2>
-  <div class="row small-up-1 medium-up-2 card-grid">
-    <% @measures.each do |measure| %>
-      <%= render "decidim/kpi_manager/kpis/item", item: measure %>
-    <% end %>
-  </div>
-</div>
+  <% end %>
+<% end %>

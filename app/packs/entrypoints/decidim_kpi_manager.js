@@ -1,17 +1,5 @@
 // Images
 require.context("../images", true)
 
-document.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-clipboard-copy]");
-
-  if (!button) {
-    return;
-  }
-
-  navigator.clipboard.writeText(button.dataset.clipboardCopy).then(() => {
-    const originalText = button.textContent;
-
-    button.textContent = "✓";
-    setTimeout(() => { button.textContent = originalText; }, 1500);
-  });
-});
+// The editor button is bundled in the Decidim core pack (see
+// src/decidim/kpi_manager/editor_button.js), so it works in public and admin forms.
