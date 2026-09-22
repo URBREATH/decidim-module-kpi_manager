@@ -1,0 +1,74 @@
+<%
+  add_decidim_page_title(translated_attribute(current_component.name))
+  # Inside `render layout: ... do ... end`, implicit `t(".key")` lookups
+  # resolve against the *layout*'s path, not this view's, so keys are fully
+  # qualified here instead.
+  i18n_scope = "decidim.kpi_manager.selections.index"
+%>
+
+<%= render layout: "layouts/decidim/shared/layout_center", locals: { columns: 10 } do %>
+  <div class="item_show">
+    <h2 class="h3 mb-4"><%= t("#{i18n_scope}.title") %></h2>
+    <p class="text-gray-2 mb-6"><%= t("#{i18n_scope}.description") %></p>
+
+    <% if @selections.empty? %>
+      <p class="text-gray-2"><%= t("#{i18n_scope}.empty") %></p>
+    <% else %>
+      <div class="row small-up-1 medium-up-2 card-grid mb-8">
+        <% @selections.each do |selection| %>
+          <div class="column">
+            <div class="card p-4">
+              <div class="card__content">
+                <h3 class="card__title mb-1"><%= selection.name %></h3>
+                <p class="mb-1">
+                  <strong><%= selection.value %> <%= selection.unit %></strong>
+                </p>
+                <p class="text-gray-2 mb-2">
+                  <small><%= selection.source %> &middot; <%= selection.recorded_at %></small>
+                </p>
+                <p class="text-gray-2 mb-2">
+                  <small><%= t("#{i18n_scope}.featured_by", name: present(selection.author).name) %></small>
+                </p>
+                <% if current_user == selection.author %>
+                  <%= button_to t("#{i18n_scope}.remove"), selection_path(selection), method: :delete, class: "button button__sm button__transparent-secondary" %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if current_user %>
+      <h2 class="h4 mb-3"><%= t("#{i18n_scope}.manage_title") %></h2>
+      <p class="text-gray-2 mb-4"><%= t("#{i18n_scope}.manage_description") %></p>
+
+      <% if @catalog.blank? %>
+        <p class="text-gray-2"><%= t("#{i18n_scope}.manage_empty") %></p>
+      <% else %>
+        <table class="kpi-manager-table">
+          <thead>
+            <tr>
+              <th><%= t("#{i18n_scope}.name") %></th>
+              <th><%= t("#{i18n_scope}.value") %></th>
+              <th><%= t("#{i18n_scope}.source") %></th>
+              <th><span class="sr-only"><%= t("#{i18n_scope}.add") %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @catalog.each do |item| %>
+              <tr>
+                <td class="kpi-manager-table__name"><%= item["name"] %></td>
+                <td class="kpi-manager-table__value"><%= item["value"] %> <%= item["unit"] %></td>
+                <td><%= item["source"] %></td>
+                <td class="text-right">
+                  <%= button_to t("#{i18n_scope}.add"), selections_path(external_id: item["id"], kind: item["type"]), method: :post, class: "button button__sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

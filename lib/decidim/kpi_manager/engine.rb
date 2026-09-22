@@ -10,18 +10,8 @@ module Decidim
       isolate_namespace Decidim::KpiManager
 
       routes do
-        resources :kpis, only: [:index]
-        root to: "kpis#index"
-      end
-
-      initializer "KpiManager.user_menu" do
-        Decidim.menu :user_menu do |menu|
-          menu.add_item :kpi_manager,
-                        I18n.t("menu.kpi_manager", scope: "decidim.kpi_manager"),
-                        decidim_kpi_manager.root_path,
-                        position: 5.0,
-                        active: :inclusive
-        end
+        resources :selections, only: [:index, :create, :destroy]
+        root to: "selections#index"
       end
 
       # Rich text written by admins (e.g. blog posts) is displayed through

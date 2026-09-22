@@ -1,0 +1,35 @@
+<div class="card">
+  <div class="card-divider">
+    <h2 class="card-title"><%= t(".title") %></h2>
+  </div>
+  <div class="card-section">
+    <% if @selections.empty? %>
+      <p><%= t(".empty") %></p>
+    <% else %>
+      <table class="table-list">
+        <thead>
+          <tr>
+            <th><%= t(".name") %></th>
+            <th><%= t(".value") %></th>
+            <th><%= t(".author") %></th>
+            <th><%= t(".updated") %></th>
+            <th><span class="sr-only"><%= t(".actions") %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @selections.each do |selection| %>
+            <tr>
+              <td><%= selection.name %></td>
+              <td><%= selection.value %> <%= selection.unit %></td>
+              <td><%= present(selection.author).name %></td>
+              <td><%= l selection.created_at, format: :decidim_short %></td>
+              <td class="table-list__actions">
+                <%= icon_link_to "close-line", selection_path(selection), t(".remove"), method: :delete, data: { confirm: t(".confirm") }, class: "action-icon--remove" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>

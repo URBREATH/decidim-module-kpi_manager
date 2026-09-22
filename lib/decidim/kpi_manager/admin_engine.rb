@@ -10,13 +10,8 @@ module Decidim
       paths["lib/tasks"] = nil
 
       routes do
-        # Add admin engine routes here
-        # resources :kpi_manager do
-        #   collection do
-        #     resources :exports, only: [:create]
-        #   end
-        # end
-        # root to: "kpi_manager#index"
+        resources :selections, only: [:index, :destroy]
+        root to: "selections#index"
       end
 
       def load_seed

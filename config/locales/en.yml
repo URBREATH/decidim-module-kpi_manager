@@ -3,27 +3,44 @@ en:
   decidim:
     components:
       kpi_manager:
-        name: KpiManager
+        name: KPIs
     kpi_manager:
-      menu:
-        kpi_manager: My KPIs
       editor:
         button: KPI
         title: Insert a KPI or measure
         search: Search…
         empty: No KPIs found.
         error: Could not load your KPIs.
-      kpis:
+      selections:
+        create:
+          success: The KPI was added.
+          not_found: That KPI or measure could not be found.
+        destroy:
+          success: The KPI was removed.
         index:
-          title: My KPIs & measures
-          description: Browse your KPIs and measures, then copy the snippet and paste it into a proposal, blog post or any other rich text field to embed it as evidence.
-          kpis: KPIs
-          measures: Measures
-          copy: Copy
-          copied: Copied!
-          copied_message: The KPI snippet was copied to the clipboard.
-          empty: Nothing to show here yet.
+          title: Featured KPIs & measures
+          description: KPIs and measures that participants chose to feature in this space, as evidence for their proposals and posts.
+          empty: Nothing has been featured here yet.
+          featured_by: "Featured by %{name}"
+          remove: Remove
+          manage_title: Feature one of my KPIs
+          manage_description: Pick one of your own KPIs or measures to feature here. It will also be available from the KPI button in any rich text editor of this space.
+          manage_empty: You have no more KPIs or measures to add, or none are configured yet.
           name: Name
           value: Value
           source: Source
-          updated: Updated
+          add: Add
+      admin:
+        selections:
+          destroy:
+            success: The KPI was removed.
+          index:
+            title: Featured KPIs & measures
+            empty: No participant has featured a KPI or measure here yet.
+            name: Name
+            value: Value
+            author: Featured by
+            updated: Date
+            actions: Actions
+            remove: Remove
+            confirm: Are you sure you want to remove this KPI from the public list?
