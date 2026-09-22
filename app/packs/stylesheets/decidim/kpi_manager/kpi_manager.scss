@@ -1,20 +1,31 @@
-// Rows in the public gallery (decidim/kpi_manager/selections/index) reuse
-// Decidim's own .card__list-* classes for each row; this just adds the
-// divider/spacing between rows, the same way decidim-core's
-// .documents__container does for the attachments list.
-.kpi-manager-list {
-  & > * {
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--background);
+// Public gallery (decidim/kpi_manager/selections/index) reuses Decidim's own
+// .card__grid-* classes for the card shell; this just adds the colored
+// header band + big value, which have no existing Decidim equivalent
+// (.card__grid-img normally holds a photo, not a stat).
+.kpi-manager-card {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--secondary);
   }
 
-  & > *:last-child {
-    border-bottom: 0;
+  &__value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--secondary);
+    line-height: 1.2;
+  }
+
+  &__unit {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--gray-2, #666);
   }
 }
 
 // Inline card rendered by Decidim::ContentRenderers::KpiRenderer wherever a
-// [[kpi ...]] shortcode appears in a proposal, blog post, etc. There is no
+// [[KPI: ...]] tag appears in a proposal, blog post, etc. There is no
 // existing Decidim component for this, so it borrows the theme's colors.
 .kpi-manager-embed {
   display: inline-flex;

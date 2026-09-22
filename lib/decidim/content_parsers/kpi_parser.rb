@@ -2,7 +2,7 @@
 
 module Decidim
   module ContentParsers
-    # The `[[kpi ...]]` shortcode already embeds a full KPI/measure snapshot
+    # The `[[KPI: ...]]` tag already embeds a full KPI/measure snapshot
     # (see Decidim::KpiManager::Shortcode), so there is nothing to rewrite at
     # parse time. Declared empty, as recommended in decidim-core's
     # content_processor.rb, since only the renderer is needed.

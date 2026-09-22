@@ -2,9 +2,9 @@
 
 module Decidim
   module ContentRenderers
-    # A renderer that replaces `[[kpi ...]]` shortcodes with a small card
-    # showing the embedded KPI/measure snapshot. Works in any rich text field
-    # across Decidim (proposals, blog posts, meetings...) since the data was
+    # A renderer that replaces `[[KPI: ...]]` tags with a small card showing
+    # the embedded KPI/measure snapshot. Works in any rich text field across
+    # Decidim (proposals, blog posts, meetings...) since the data was
     # captured into the tag itself when it was inserted - no API call needed.
     #
     # @see Decidim::KpiManager::Shortcode
