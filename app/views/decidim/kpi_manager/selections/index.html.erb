@@ -16,10 +16,10 @@
     <div class="card__grid-grid">
       <% @selections.each do |selection| %>
         <div class="card__grid kpi-manager-card">
-          <div class="card__grid-img kpi-manager-card__header">
-            <%= icon "bar-chart-2-line", class: "w-10 h-10 text-white fill-current" %>
-          </div>
           <div class="card__grid-text">
+            <div class="kpi-manager-card__icon">
+              <%= icon "bar-chart-2-line", class: "w-5 h-5 text-white fill-current" %>
+            </div>
             <h3 class="h4 text-secondary"><%= selection.name %></h3>
             <p class="kpi-manager-card__value">
               <%= selection.value %> <span class="kpi-manager-card__unit"><%= selection.unit %></span>

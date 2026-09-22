@@ -1,13 +1,17 @@
 // Public gallery (decidim/kpi_manager/selections/index) reuses Decidim's own
-// .card__grid-* classes for the card shell; this just adds the colored
-// header band + big value, which have no existing Decidim equivalent
-// (.card__grid-img normally holds a photo, not a stat).
+// .card__grid-* classes for the card shell (skipping .card__grid-img, since
+// these cards have no photo); this just adds the small icon badge and the
+// big value, which have no existing Decidim equivalent.
 .kpi-manager-card {
-  &__header {
+  &__icon {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
     background: var(--secondary);
+    margin-bottom: 0.25rem;
   }
 
   &__value {
