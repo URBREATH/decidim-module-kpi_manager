@@ -12,35 +12,29 @@ en:
         empty: No KPIs found.
         error: Could not load your KPIs.
       selections:
-        create:
-          success: The KPI was added.
-          not_found: That KPI or measure could not be found.
-        destroy:
-          success: The KPI was removed.
         index:
           title: Featured KPIs & measures
-          description: KPIs and measures that participants chose to feature in this space, as evidence for their proposals and posts.
+          description: KPIs and measures the space admin chose to feature here, as evidence for proposals and posts.
           empty: Nothing has been featured here yet.
           featured_by: "Featured by %{name}"
-          remove: Remove
-          manage_title: Feature one of my KPIs
-          manage_description: Pick one of your own KPIs or measures to feature here. It will also be available from the KPI button in any rich text editor of this space.
-          manage_empty: You have no more KPIs or measures to add, or none are configured yet.
-          name: Name
-          value: Value
-          source: Source
-          add: Add
       admin:
         selections:
+          create:
+            success: The KPI was added.
+            not_found: That KPI or measure could not be found.
           destroy:
             success: The KPI was removed.
           index:
-            title: Featured KPIs & measures
-            empty: No participant has featured a KPI or measure here yet.
+            featured_title: Featured KPIs & measures
+            empty: Nothing has been featured yet.
+            catalog_title: Feature one of my KPIs
+            catalog_description: Pick one of your own KPIs or measures (fetched from the KPI Manager API) to feature in this space's public gallery. It will also be available from the KPI button in any rich text editor of this space.
+            catalog_empty: You have no more KPIs or measures to add, or none are configured yet.
             name: Name
             value: Value
-            author: Featured by
+            source: Source
             updated: Date
             actions: Actions
+            add: Add
             remove: Remove
             confirm: Are you sure you want to remove this KPI from the public list?

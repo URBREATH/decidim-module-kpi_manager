@@ -10,7 +10,7 @@ module Decidim
       isolate_namespace Decidim::KpiManager
 
       routes do
-        resources :selections, only: [:index, :create, :destroy]
+        resources :selections, only: [:index]
         root to: "selections#index"
       end
 
