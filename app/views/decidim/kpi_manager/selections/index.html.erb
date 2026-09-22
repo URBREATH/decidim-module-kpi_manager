@@ -7,33 +7,28 @@
 %>
 
 <%= render layout: "layouts/decidim/shared/layout_center", locals: { columns: 10 } do %>
-  <div class="item_show">
-    <h2 class="h3 mb-4"><%= t("#{i18n_scope}.title") %></h2>
-    <p class="text-gray-2 mb-6"><%= t("#{i18n_scope}.description") %></p>
+  <h2 class="h3 mb-4"><%= t("#{i18n_scope}.title") %></h2>
+  <p class="text-gray-2 mb-6"><%= t("#{i18n_scope}.description") %></p>
 
-    <% if @selections.empty? %>
-      <p class="text-gray-2"><%= t("#{i18n_scope}.empty") %></p>
-    <% else %>
-      <div class="row small-up-1 medium-up-2 card-grid mb-8">
-        <% @selections.each do |selection| %>
-          <div class="column">
-            <div class="card p-4">
-              <div class="card__content">
-                <h3 class="card__title mb-1"><%= selection.name %></h3>
-                <p class="mb-1">
-                  <strong><%= selection.value %> <%= selection.unit %></strong>
-                </p>
-                <p class="text-gray-2 mb-2">
-                  <small><%= selection.source %> &middot; <%= selection.recorded_at %></small>
-                </p>
-                <p class="text-gray-2">
-                  <small><%= t("#{i18n_scope}.featured_by", name: present(selection.author).name) %></small>
-                </p>
-              </div>
-            </div>
+  <% if @selections.empty? %>
+    <p class="text-gray-2"><%= t("#{i18n_scope}.empty") %></p>
+  <% else %>
+    <div class="kpi-manager-list">
+      <% @selections.each do |selection| %>
+        <div class="card__list-content">
+          <span class="card__list-title"><%= selection.name %></span>
+          <div class="card__list-metadata">
+            <div><%= icon "bar-chart-2-line" %><%= selection.value %> <%= selection.unit %></div>
+            <% if selection.source.present? %>
+              <div><%= icon "map-pin-line" %><%= selection.source %></div>
+            <% end %>
+            <% if selection.recorded_at.present? %>
+              <div><%= icon "calendar-line" %><%= selection.recorded_at %></div>
+            <% end %>
+            <div><%= icon "user-line" %><%= t("#{i18n_scope}.featured_by", name: present(selection.author).name) %></div>
           </div>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
