@@ -1,27 +1,16 @@
 // Adds an "Insert KPI" button to every Decidim rich text editor toolbar
 // (public and admin forms, e.g. blog posts and proposals). It lists the
-// KPIs/measures featured in the current participatory space's KPI Manager
-// component (found via the `context-current-participatory-space` meta tag,
-// present on every Decidim page) and inserts the selected `[[kpi ...]]`
-// shortcode at the cursor.
+// signed-in user's full KPI/measure catalog (their own data from the
+// URBREATH API) and inserts the selected `[[KPI: ...]]` tag at the cursor.
 
+const ENDPOINT = "/kpi_manager/catalog.json";
 let labels = {};
 const label = (key, fallback) => labels[key] || fallback;
 
-const currentSpaceGid = () => document.querySelector('meta[name="context-current-participatory-space"]')?.content;
-
 let itemsPromise = null;
 const loadItems = () => {
-  const gid = currentSpaceGid();
-
-  if (!gid) {
-    return Promise.resolve([]);
-  }
-
   if (!itemsPromise) {
-    const url = `/kpi_manager/selections.json?participatory_space_gid=${encodeURIComponent(gid)}`;
-
-    itemsPromise = fetch(url, { headers: { Accept: "application/json" }, credentials: "same-origin" }).
+    itemsPromise = fetch(ENDPOINT, { headers: { Accept: "application/json" }, credentials: "same-origin" }).
       then((response) => {
         if (!response.ok) {
           throw new Error(response.status);
