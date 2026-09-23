@@ -1,16 +1,23 @@
 // Adds an "Insert KPI" button to every Decidim rich text editor toolbar
 // (public and admin forms, e.g. blog posts and proposals). It lists the
 // signed-in user's full KPI/measure catalog (their own data from the
-// URBREATH API) and inserts the selected `[[KPI: ...]]` tag at the cursor.
+// URBREATH API) and inserts the selected one as a bold link - plain rich
+// text, no brackets - pointing to that space's KPI gallery.
 
 const ENDPOINT = "/kpi_manager/catalog.json";
 let labels = {};
+let galleryUrl = null;
 const label = (key, fallback) => labels[key] || fallback;
+
+const currentSpaceGid = () => document.querySelector('meta[name="context-current-participatory-space"]')?.content;
 
 let itemsPromise = null;
 const loadItems = () => {
   if (!itemsPromise) {
-    itemsPromise = fetch(ENDPOINT, { headers: { Accept: "application/json" }, credentials: "same-origin" }).
+    const gid = currentSpaceGid();
+    const url = gid ? `${ENDPOINT}?participatory_space_gid=${encodeURIComponent(gid)}` : ENDPOINT;
+
+    itemsPromise = fetch(url, { headers: { Accept: "application/json" }, credentials: "same-origin" }).
       then((response) => {
         if (!response.ok) {
           throw new Error(response.status);
@@ -19,6 +26,7 @@ const loadItems = () => {
       }).
       then((data) => {
         labels = data.labels || {};
+        galleryUrl = data.gallery_url || null;
         return data.items;
       }).
       catch((error) => {
@@ -65,6 +73,19 @@ const renderItems = (list, items, query, insert) => {
   });
 };
 
+// Builds the rich text inserted into the editor: a bold link reading
+// "Name: value unit" (no brackets, no shortcode). If this space has no KPI
+// gallery to link to, it falls back to plain bold text.
+const buildInsertHtml = (item) => {
+  const span = document.createElement("span");
+  span.textContent = `${item.name}: ${[item.value, item.unit].filter(Boolean).join(" ")}`.trim();
+  const label_ = span.innerHTML;
+
+  const html = galleryUrl ? `<a href="${galleryUrl}"><strong>${label_}</strong></a>` : `<strong>${label_}</strong>`;
+
+  return `${html}&nbsp;`;
+};
+
 const openPicker = (anchor, editor) => {
   closePicker();
 
@@ -87,7 +108,7 @@ const openPicker = (anchor, editor) => {
   search.focus();
 
   const insert = (item) => {
-    editor.chain().focus().insertContent(`${item.shortcode} `).run();
+    editor.chain().focus().insertContent(buildInsertHtml(item)).run();
     closePicker();
   };
 
