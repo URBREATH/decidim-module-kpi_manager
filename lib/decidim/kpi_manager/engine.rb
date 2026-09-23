@@ -10,7 +10,9 @@ module Decidim
       isolate_namespace Decidim::KpiManager
 
       routes do
-        resources :selections, only: [:index]
+        resources :selections, only: [:index] do
+          member { get :measures }
+        end
         root to: "selections#index"
       end
 

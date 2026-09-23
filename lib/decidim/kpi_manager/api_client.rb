@@ -51,6 +51,23 @@ module Decidim
         fetch("/historical-data/query/all", query: { bucket:, measurement:, kpimEngineRequest: false })
       end
 
+      # The measures a KPI is computed from, e.g. "AvgTempAthens" is the
+      # average of "TempSouthAthens", "TempCentreAthens" and
+      # "TempNorthAthens". The API exposes that relationship as
+      # `definition.selected` (a list of { id, type, name }) on the KPI
+      # itself, so this cross-references it against the full measures list.
+      def measures_for_kpi(id)
+        kpi = find_kpi(id)
+        return [] unless kpi
+
+        selected = kpi.dig("raw", "definition", "selected")
+        return demo_measures(nil) if selected.blank?
+
+        wanted_ids = selected.map { |item| item["id"].to_s }
+        wanted_names = selected.map { |item| item["name"].to_s }
+        measures.select { |measure| wanted_ids.include?(measure["id"]) || wanted_names.include?(measure["name"]) }
+      end
+
       private
 
       attr_reader :access_token, :base_url

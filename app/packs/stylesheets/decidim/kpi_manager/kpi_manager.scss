@@ -26,6 +26,56 @@
     font-weight: 400;
     color: var(--gray-2, #666);
   }
+
+  &--expandable {
+    cursor: pointer;
+  }
+
+  &__expand-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    color: var(--secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  &__expand-icon {
+    transition: transform 0.15s ease;
+  }
+
+  &--expandable[aria-expanded="true"] &__expand-icon {
+    transform: rotate(180deg);
+  }
+
+  &__measures {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--background);
+  }
+
+  &__measure {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    font-size: 0.85rem;
+
+    &-name {
+      color: var(--gray-2, #666);
+    }
+
+    &-value {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+  }
+
+  &__measures-empty {
+    color: var(--gray-2, #666);
+    font-size: 0.85rem;
+  }
 }
 
 // Inline card rendered by Decidim::ContentRenderers::KpiRenderer wherever a

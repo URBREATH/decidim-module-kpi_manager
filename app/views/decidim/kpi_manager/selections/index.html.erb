@@ -5,6 +5,7 @@
   # qualified here instead.
   i18n_scope = "decidim.kpi_manager.selections.index"
 %>
+<% append_javascript_pack_tag "decidim_kpi_manager" %>
 
 <%= render layout: "layouts/decidim/shared/layout_center", locals: { columns: 10 } do %>
   <h2 class="h3 mb-4"><%= t("#{i18n_scope}.title") %></h2>
@@ -15,7 +16,19 @@
   <% else %>
     <div class="card__grid-grid">
       <% @selections.each do |selection| %>
-        <div class="card__grid kpi-manager-card">
+        <%
+          expandable = selection.kind == "kpi"
+          card_classes = ["card__grid", "kpi-manager-card"]
+          card_classes << "kpi-manager-card--expandable" if expandable
+        %>
+        <div class="<%= card_classes.join(" ") %>"
+             <% if expandable %>
+               role="button" tabindex="0" aria-expanded="false"
+               data-kpi-manager-expand
+               data-measures-url="<%= measures_selection_path(selection) %>"
+               data-loading-label="<%= t("#{i18n_scope}.loading_measures") %>"
+               data-empty-label="<%= t("#{i18n_scope}.no_measures") %>"
+             <% end %>>
           <div class="card__grid-text">
             <div class="kpi-manager-card__icon">
               <%= icon "bar-chart-2-line", class: "w-5 h-5 text-white fill-current" %>
@@ -35,6 +48,13 @@
             <p class="text-sm text-gray-2 mt-2">
               <%= icon "user-line", class: "inline-block" %> <%= t("#{i18n_scope}.featured_by", name: present(selection.author).name) %>
             </p>
+            <% if expandable %>
+              <p class="kpi-manager-card__expand-hint">
+                <%= icon "arrow-down-s-line", class: "kpi-manager-card__expand-icon" %>
+                <%= t("#{i18n_scope}.show_measures") %>
+              </p>
+              <div class="kpi-manager-card__measures" hidden></div>
+            <% end %>
           </div>
         </div>
       <% end %>
