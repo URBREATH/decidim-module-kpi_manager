@@ -20,6 +20,7 @@ en:
           show_measures: Show the measures behind this KPI
           loading_measures: Loading measures…
           no_measures: No measures are linked to this KPI.
+          via_source: "via"
       admin:
         selections:
           create:

@@ -21,6 +21,7 @@ module Decidim
       def measures
         selection = Selection.where(component: current_component).find(params[:id])
         items = selection.kind == "kpi" ? api_client.measures_for_kpi(selection.external_id) : []
+        items = items.map { |item| item.slice("id", "name", "value", "unit", "source_host", "source_type") }
 
         render json: { items: }
       end

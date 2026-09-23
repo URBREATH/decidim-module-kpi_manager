@@ -119,8 +119,22 @@ module Decidim
           "target" => item.dig("definition", "targetValue"),
           "recorded_at" => (item["lastUpdate"] || item["recorded_at"] || item["timestamp"] || item["updatedAt"]).to_s[0, 10].presence,
           "source" => item["context"] || "URBREATH KPI Manager",
+          # Measures have no cached value of their own (see API reference
+          # above): they only describe where the KPI engine reads one from,
+          # e.g. an external REST API polled at `source.uri`. This is kept
+          # so the UI can show *that* instead of a blank value.
+          "source_host" => source_host(item.dig("source", "uri")),
+          "source_type" => item.dig("source", "type"),
           "raw" => item
         }
+      end
+
+      def source_host(uri)
+        return nil if uri.blank?
+
+        URI.parse(uri).host
+      rescue URI::InvalidURIError
+        nil
       end
 
       def normalize_collection(payload, type, query)
