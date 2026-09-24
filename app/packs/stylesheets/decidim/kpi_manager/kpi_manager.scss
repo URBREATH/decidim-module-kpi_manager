@@ -58,6 +58,39 @@
   }
 }
 
+// Link inserted by the editor button (see editor_button.js), rendered
+// wherever that content is later displayed (proposals, blog posts, ...).
+.kpi-manager-link {
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  cursor: help;
+}
+
+// Detail card shown on hover/focus of a .kpi-manager-link (see
+// link_preview.js). Also custom: not a Decidim tooltip/popover component.
+.kpi-manager-preview {
+  position: absolute;
+  z-index: 60;
+  min-width: 12rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--background-4, #d5d9e0);
+  border-radius: 0.5rem;
+  background: white;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 15%);
+  font-size: 0.85rem;
+  pointer-events: none;
+
+  &__name {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--secondary);
+  }
+
+  &__row {
+    color: var(--gray-2, #666);
+  }
+}
+
 // "Insert KPI" dropdown opened from the rich text editor toolbar
 // (editor_button.js). Also custom: the editor toolbar has no built-in
 // picker/search dropdown to extend.

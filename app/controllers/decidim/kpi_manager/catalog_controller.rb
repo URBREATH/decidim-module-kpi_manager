@@ -3,28 +3,37 @@
 module Decidim
   module KpiManager
     # Small endpoint used by the "Insert KPI" editor button (added to every
-    # rich text editor, see editor_button.js): returns the signed-in user's
-    # full KPI/measure catalog from the URBREATH API (their own data, scoped
-    # by their Keycloak session token) - not just what has been featured in
-    # any one component instance - plus the URL of the current participatory
-    # space's KPI gallery (if it has one), so inserted items can link there.
+    # rich text editor, see editor_button.js): returns the KPIs/measures
+    # featured in the current participatory space's KPI component (the same
+    # ones shown in its public gallery, see SelectionsController#index) -
+    # not the author's whole catalog - plus the URL of that gallery, so
+    # inserted items can link there.
     #
     # This lives outside Decidim::KpiManager::Engine (which is mounted per
     # component instance) because it needs to be reachable from any page,
     # regardless of which component the author is currently writing in.
     class CatalogController < Decidim::ApplicationController
-      include Decidim::KpiManager::HasApiClient
       include Decidim::ComponentPathHelper
 
       def index
         render json: {
           labels: I18n.t("decidim.kpi_manager.editor").transform_keys(&:to_s),
           gallery_url:,
-          items: (api_client.kpis + api_client.measures).map { |item| item.slice("id", "type", "name", "value", "unit", "recorded_at", "source") }
+          items: selections.map { |selection| serialize(selection) }
         }
       end
 
       private
+
+      def selections
+        return [] unless component
+
+        Selection.where(component:).order(created_at: :desc)
+      end
+
+      def serialize(selection)
+        selection.to_item
+      end
 
       def gallery_url
         component ? main_component_path(component) : nil

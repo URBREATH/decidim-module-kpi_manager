@@ -1,8 +1,9 @@
 // Adds an "Insert KPI" button to every Decidim rich text editor toolbar
 // (public and admin forms, e.g. blog posts and proposals). It lists the
-// signed-in user's full KPI/measure catalog (their own data from the
-// URBREATH API) and inserts the selected one as a bold link - plain rich
-// text, no brackets - pointing to that space's KPI gallery.
+// KPIs/measures already featured in the current participatory space's KPI
+// component (the same ones shown in its public gallery) and inserts the
+// selected one as a bold link - plain rich text, no brackets - pointing to
+// that gallery.
 
 const ENDPOINT = "/kpi_manager/catalog.json";
 let labels = {};
@@ -73,15 +74,31 @@ const renderItems = (list, items, query, insert) => {
   });
 };
 
+const escapeHtml = (value) => {
+  const span = document.createElement("span");
+  span.textContent = value ?? "";
+  return span.innerHTML;
+};
+
+// `title` is one of the few attributes Decidim's sanitizer keeps on saved
+// content (data-* attributes get stripped), so the detail card shown on
+// hover (see link_preview.js) is smuggled through as pipe-delimited text
+// there, then parsed back client-side once the content is displayed.
+const buildTitle = (item) => ["KPI", item.name, item.value, item.unit, item.source, item.recorded_at].
+  map((part) => (part ?? "").toString().replace(/\|/g, "/")).
+  join("|");
+
 // Builds the rich text inserted into the editor: a bold link reading
 // "Name: value unit" (no brackets, no shortcode). If this space has no KPI
-// gallery to link to, it falls back to plain bold text.
+// gallery to link to, it falls back to plain bold text (still hoverable).
 const buildInsertHtml = (item) => {
-  const span = document.createElement("span");
-  span.textContent = `${item.name}: ${[item.value, item.unit].filter(Boolean).join(" ")}`.trim();
-  const label_ = span.innerHTML;
+  const text = escapeHtml(`${item.name}: ${[item.value, item.unit].filter(Boolean).join(" ")}`.trim());
+  const title = escapeHtml(buildTitle(item));
+  const inner = `<strong>${text}</strong>`;
 
-  const html = galleryUrl ? `<a href="${galleryUrl}"><strong>${label_}</strong></a>` : `<strong>${label_}</strong>`;
+  const html = galleryUrl
+    ? `<a href="${galleryUrl}" class="kpi-manager-link" title="${title}">${inner}</a>`
+    : `<span class="kpi-manager-link" title="${title}">${inner}</span>`;
 
   return `${html}&nbsp;`;
 };
