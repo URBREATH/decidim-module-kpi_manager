@@ -17,10 +17,6 @@ en:
           description: KPIs and measures the space admin chose to feature here, as evidence for proposals and posts.
           empty: Nothing has been featured here yet.
           featured_by: "Featured by %{name}"
-          show_measures: Show the measures behind this KPI
-          loading_measures: Loading measures…
-          no_measures: No measures are linked to this KPI.
-          via_source: "via"
       admin:
         selections:
           create:

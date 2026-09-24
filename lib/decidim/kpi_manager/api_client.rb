@@ -51,23 +51,6 @@ module Decidim
         fetch("/historical-data/query/all", query: { bucket:, measurement:, kpimEngineRequest: false })
       end
 
-      # The measures a KPI is computed from, e.g. "AvgTempAthens" is the
-      # average of "TempSouthAthens", "TempCentreAthens" and
-      # "TempNorthAthens". The API exposes that relationship as
-      # `definition.selected` (a list of { id, type, name }) on the KPI
-      # itself, so this cross-references it against the full measures list.
-      def measures_for_kpi(id)
-        kpi = find_kpi(id)
-        return [] unless kpi
-
-        selected = kpi.dig("raw", "definition", "selected")
-        return demo_measures(nil) if selected.blank?
-
-        wanted_ids = selected.map { |item| item["id"].to_s }
-        wanted_names = selected.map { |item| item["name"].to_s }
-        measures.select { |measure| wanted_ids.include?(measure["id"]) || wanted_names.include?(measure["name"]) }
-      end
-
       private
 
       attr_reader :access_token, :base_url
@@ -119,22 +102,8 @@ module Decidim
           "target" => item.dig("definition", "targetValue"),
           "recorded_at" => (item["lastUpdate"] || item["recorded_at"] || item["timestamp"] || item["updatedAt"]).to_s[0, 10].presence,
           "source" => item["context"] || "URBREATH KPI Manager",
-          # Measures have no cached value of their own (see API reference
-          # above): they only describe where the KPI engine reads one from,
-          # e.g. an external REST API polled at `source.uri`. This is kept
-          # so the UI can show *that* instead of a blank value.
-          "source_host" => source_host(item.dig("source", "uri")),
-          "source_type" => item.dig("source", "type"),
           "raw" => item
         }
-      end
-
-      def source_host(uri)
-        return nil if uri.blank?
-
-        URI.parse(uri).host
-      rescue URI::InvalidURIError
-        nil
       end
 
       def normalize_collection(payload, type, query)

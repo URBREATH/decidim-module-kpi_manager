@@ -15,17 +15,6 @@ module Decidim
         end
       end
 
-      # The measures a featured KPI is computed from, fetched on demand when
-      # its card is expanded (see app/packs/src/decidim/kpi_manager/card_expand.js).
-      # Only meaningful for KPIs, not for measures themselves.
-      def measures
-        selection = Selection.where(component: current_component).find(params[:id])
-        items = selection.kind == "kpi" ? api_client.measures_for_kpi(selection.external_id) : []
-        items = items.map { |item| item.slice("id", "name", "value", "unit", "source_host", "source_type") }
-
-        render json: { items: }
-      end
-
       private
 
       def serialize(selection)
