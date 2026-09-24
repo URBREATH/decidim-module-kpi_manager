@@ -11,6 +11,7 @@ en:
         search: Search…
         empty: No KPIs found.
         error: Could not load your KPIs.
+        featured_by: "Featured by %{name}"
       selections:
         index:
           title: Featured KPIs & measures

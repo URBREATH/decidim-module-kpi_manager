@@ -3,10 +3,16 @@
 // not just the editor - because these links end up in published content
 // (proposals, blog posts, ...) read by anyone, not just their author.
 //
-// The KPI's name/value/unit/source/date travel in the link's query string
-// (see editor_button.js for why: it's the one attribute that survives both
-// the editor's own link parsing and Decidim's server-side sanitizer, unlike
-// e.g. title or data-* attributes).
+// The KPI's name/value/unit/source/date/author travel in the link's query
+// string (see editor_button.js for why: it's the one attribute that
+// survives both the editor's own link parsing and Decidim's server-side
+// sanitizer, unlike e.g. title or data-* attributes).
+//
+// The card reuses the exact same markup/classes as the public gallery (see
+// decidim/kpi_manager/selections/index.html.erb) so it looks identical,
+// down to the remixicon icons - whose sprite path (content-hashed by the
+// asset pipeline) is read off any icon already on the page rather than
+// hardcoded.
 
 const parsed = new WeakMap();
 
@@ -19,9 +25,9 @@ const parseLink = (link) => {
 
   try {
     const raw = new URL(link.getAttribute("href"), window.location.origin).searchParams.get("kpi") || "";
-    const [marker, name, value, unit, source, recordedAt] = raw.split("|");
+    const [marker, name, value, unit, source, recordedAt, featuredBy] = raw.split("|");
 
-    data = marker === "KPI" ? { name, value, unit, source, recordedAt } : null;
+    data = marker === "KPI" ? { name, value, unit, source, recordedAt, featuredBy } : null;
   } catch {
     data = null;
   }
@@ -29,6 +35,24 @@ const parseLink = (link) => {
   parsed.set(link, data);
 
   return data;
+};
+
+const spriteHref = () => document.querySelector('svg use[href*="remixicon"]')?.getAttribute("href")?.split("#")[0];
+
+const iconSvg = (name, extraClass = "") => {
+  const sprite = spriteHref();
+
+  if (!sprite) {
+    return "";
+  }
+
+  return `<svg width="1em" height="1em" role="img" aria-hidden="true" class="${extraClass}"><use href="${sprite}#ri-${name}"></use></svg>`;
+};
+
+const escapeHtml = (value) => {
+  const span = document.createElement("span");
+  span.textContent = value ?? "";
+  return span.innerHTML;
 };
 
 let card = null;
@@ -47,23 +71,23 @@ const openCard = (link) => {
   closeCard();
 
   card = document.createElement("div");
-  card.className = "kpi-manager-preview";
+  card.className = "card__grid kpi-manager-card kpi-manager-preview";
   card.setAttribute("role", "tooltip");
 
-  const rows = [
-    data.value ? `${data.value} ${data.unit ?? ""}`.trim() : null,
-    data.source || null,
-    data.recordedAt || null
-  ].filter(Boolean);
-
   card.innerHTML = `
-    <strong class="kpi-manager-preview__name"></strong>
-    ${rows.map(() => `<div class="kpi-manager-preview__row"><span></span></div>`).join("")}
+    <div class="card__grid-text">
+      <div class="kpi-manager-card__icon">${iconSvg("bar-chart-2-line", "w-5 h-5 text-white fill-current")}</div>
+      <h3 class="h4 text-secondary">${escapeHtml(data.name)}</h3>
+      <p class="kpi-manager-card__value">
+        ${escapeHtml(data.value)} <span class="kpi-manager-card__unit">${escapeHtml(data.unit)}</span>
+      </p>
+      <div class="card__grid-metadata">
+        ${data.source ? `<div>${iconSvg("map-pin-line")}${escapeHtml(data.source)}</div>` : ""}
+        ${data.recordedAt ? `<div>${iconSvg("calendar-line")}${escapeHtml(data.recordedAt)}</div>` : ""}
+      </div>
+      ${data.featuredBy ? `<p class="text-sm text-gray-2 mt-2">${iconSvg("user-line", "inline-block")} ${escapeHtml(data.featuredBy)}</p>` : ""}
+    </div>
   `;
-  card.querySelector(".kpi-manager-preview__name").textContent = data.name;
-  card.querySelectorAll(".kpi-manager-preview__row span").forEach((span, index) => {
-    span.textContent = rows[index];
-  });
 
   document.body.appendChild(card);
 

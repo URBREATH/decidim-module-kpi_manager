@@ -32,7 +32,7 @@ module Decidim
       end
 
       def serialize(selection)
-        selection.to_item
+        selection.to_item.merge("featured_by" => helpers.present(selection.author).name)
       end
 
       def gallery_url

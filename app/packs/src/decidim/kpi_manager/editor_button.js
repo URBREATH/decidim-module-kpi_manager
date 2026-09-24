@@ -89,8 +89,10 @@ const escapeHtml = (value) => {
 // instead; the base URL still points at the gallery, so the link keeps
 // working normally when clicked.
 const buildHref = (item) => {
+  const featuredBy = label("featured_by", "Featured by %{name}").replace("%{name}", item.featured_by ?? "");
+
   const params = new URLSearchParams({
-    kpi: ["KPI", item.name, item.value, item.unit, item.source, item.recorded_at].
+    kpi: ["KPI", item.name, item.value, item.unit, item.source, item.recorded_at, featuredBy].
       map((part) => (part ?? "").toString().replace(/\|/g, "/")).
       join("|")
   });
