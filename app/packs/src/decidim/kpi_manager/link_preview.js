@@ -3,22 +3,29 @@
 // not just the editor - because these links end up in published content
 // (proposals, blog posts, ...) read by anyone, not just their author.
 //
-// The KPI's name/value/unit/source/date travel through content sanitization
-// packed into the `title` attribute (one of the few Decidim's scrubber
-// keeps), so this reads it once, stashes the parsed data, and clears the
-// attribute so the browser's own tooltip doesn't fight with this one.
+// The KPI's name/value/unit/source/date travel in the link's query string
+// (see editor_button.js for why: it's the one attribute that survives both
+// the editor's own link parsing and Decidim's server-side sanitizer, unlike
+// e.g. title or data-* attributes).
 
 const parsed = new WeakMap();
 
-const parseTitle = (link) => {
+const parseLink = (link) => {
   if (parsed.has(link)) {
     return parsed.get(link);
   }
 
-  const [marker, name, value, unit, source, recordedAt] = (link.getAttribute("title") || "").split("|");
-  const data = marker === "KPI" ? { name, value, unit, source, recordedAt } : null;
+  let data = null;
 
-  link.removeAttribute("title");
+  try {
+    const raw = new URL(link.getAttribute("href"), window.location.origin).searchParams.get("kpi") || "";
+    const [marker, name, value, unit, source, recordedAt] = raw.split("|");
+
+    data = marker === "KPI" ? { name, value, unit, source, recordedAt } : null;
+  } catch {
+    data = null;
+  }
+
   parsed.set(link, data);
 
   return data;
@@ -31,7 +38,7 @@ const closeCard = () => {
 };
 
 const openCard = (link) => {
-  const data = parseTitle(link);
+  const data = parseLink(link);
 
   if (!data) {
     return;

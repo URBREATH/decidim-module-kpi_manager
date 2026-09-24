@@ -80,25 +80,36 @@ const escapeHtml = (value) => {
   return span.innerHTML;
 };
 
-// `title` is one of the few attributes Decidim's sanitizer keeps on saved
-// content (data-* attributes get stripped), so the detail card shown on
-// hover (see link_preview.js) is smuggled through as pipe-delimited text
-// there, then parsed back client-side once the content is displayed.
-const buildTitle = (item) => ["KPI", item.name, item.value, item.unit, item.source, item.recorded_at].
-  map((part) => (part ?? "").toString().replace(/\|/g, "/")).
-  join("|");
+// The data shown on hover (see link_preview.js) has to travel through two
+// filters: Decidim's server-side content sanitizer when the content is
+// saved, AND - before that even happens - the editor's own Link mark, which
+// only recognizes href/target/rel/class and silently drops anything else
+// (title included) the moment the link is inserted. `href` is the one
+// attribute both keep intact, so the data rides along in its query string
+// instead; the base URL still points at the gallery, so the link keeps
+// working normally when clicked.
+const buildHref = (item) => {
+  const params = new URLSearchParams({
+    kpi: ["KPI", item.name, item.value, item.unit, item.source, item.recorded_at].
+      map((part) => (part ?? "").toString().replace(/\|/g, "/")).
+      join("|")
+  });
+
+  return `${galleryUrl}?${params.toString()}`;
+};
 
 // Builds the rich text inserted into the editor: a bold link reading
 // "Name: value unit" (no brackets, no shortcode). If this space has no KPI
-// gallery to link to, it falls back to plain bold text (still hoverable).
+// gallery to link to, it falls back to plain bold text (not hoverable: with
+// no href, there is no attribute left that survives insertion to carry the
+// detail data through).
 const buildInsertHtml = (item) => {
   const text = escapeHtml(`${item.name}: ${[item.value, item.unit].filter(Boolean).join(" ")}`.trim());
-  const title = escapeHtml(buildTitle(item));
   const inner = `<strong>${text}</strong>`;
 
   const html = galleryUrl
-    ? `<a href="${galleryUrl}" class="kpi-manager-link" title="${title}">${inner}</a>`
-    : `<span class="kpi-manager-link" title="${title}">${inner}</span>`;
+    ? `<a href="${escapeHtml(buildHref(item))}" class="kpi-manager-link">${inner}</a>`
+    : inner;
 
   return `${html}&nbsp;`;
 };
