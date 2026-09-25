@@ -21,6 +21,9 @@
               <%= icon "bar-chart-2-line", class: "w-5 h-5 text-white fill-current" %>
             </div>
             <h3 class="h4 text-secondary"><%= selection.name %></h3>
+            <% if selection.description.present? %>
+              <p class="text-sm text-gray-2"><%= truncate(selection.description, length: 140) %></p>
+            <% end %>
             <p class="kpi-manager-card__value">
               <%= selection.value %> <span class="kpi-manager-card__unit"><%= selection.unit %></span>
             </p>

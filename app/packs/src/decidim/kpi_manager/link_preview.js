@@ -25,9 +25,9 @@ const parseLink = (link) => {
 
   try {
     const raw = new URL(link.getAttribute("href"), window.location.origin).searchParams.get("kpi") || "";
-    const [marker, name, value, unit, source, recordedAt, featuredBy] = raw.split("|");
+    const [marker, name, description, value, unit, source, recordedAt, featuredBy] = raw.split("|");
 
-    data = marker === "KPI" ? { name, value, unit, source, recordedAt, featuredBy } : null;
+    data = marker === "KPI" ? { name, description, value, unit, source, recordedAt, featuredBy } : null;
   } catch {
     data = null;
   }
@@ -78,6 +78,7 @@ const openCard = (link) => {
     <div class="card__grid-text">
       <div class="kpi-manager-card__icon">${iconSvg("bar-chart-2-line", "w-5 h-5 text-white fill-current")}</div>
       <h3 class="h4 text-secondary">${escapeHtml(data.name)}</h3>
+      ${data.description ? `<p class="text-sm text-gray-2">${escapeHtml(data.description)}</p>` : ""}
       <p class="kpi-manager-card__value">
         ${escapeHtml(data.value)} <span class="kpi-manager-card__unit">${escapeHtml(data.unit)}</span>
       </p>

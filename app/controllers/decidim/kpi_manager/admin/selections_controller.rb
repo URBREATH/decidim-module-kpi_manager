@@ -25,7 +25,7 @@ module Decidim
           item = find_in_catalog(params[:external_id], params[:kind])
           return redirect_to selections_path, alert: t(".not_found") unless item
 
-          selection = Decidim::KpiManager::Selection.new(item.slice("name", "value", "unit", "recorded_at", "source").merge(
+          selection = Decidim::KpiManager::Selection.new(item.slice("name", "description", "value", "unit", "recorded_at", "source").merge(
                                                              component: current_component,
                                                              author: current_user,
                                                              external_id: item["id"],

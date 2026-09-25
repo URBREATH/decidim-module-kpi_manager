@@ -19,7 +19,12 @@
         <tbody>
           <% @selections.each do |selection| %>
             <tr>
-              <td data-label="<%= t(".name") %>"><%= selection.name %></td>
+              <td data-label="<%= t(".name") %>">
+                <%= selection.name %>
+                <% if selection.description.present? %>
+                  <br><small class="text-gray-2"><%= truncate(selection.description, length: 120) %></small>
+                <% end %>
+              </td>
               <td data-label="<%= t(".value") %>"><%= selection.value %> <%= selection.unit %></td>
               <td data-label="<%= t(".updated") %>"><%= l selection.created_at, format: :decidim_short %></td>
               <td class="table-list__actions" data-label="<%= t(".actions") %>">
@@ -55,7 +60,12 @@
         <tbody>
           <% @catalog.each do |item| %>
             <tr>
-              <td data-label="<%= t(".name") %>"><%= item["name"] %></td>
+              <td data-label="<%= t(".name") %>">
+                <%= item["name"] %>
+                <% if item["description"].present? %>
+                  <br><small class="text-gray-2"><%= truncate(item["description"], length: 120) %></small>
+                <% end %>
+              </td>
               <td data-label="<%= t(".value") %>"><%= item["value"] %> <%= item["unit"] %></td>
               <td data-label="<%= t(".source") %>"><%= item["source"] %></td>
               <td class="table-list__actions" data-label="<%= t(".add") %>">

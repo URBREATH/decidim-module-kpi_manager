@@ -18,6 +18,7 @@ module Decidim
           "id" => external_id,
           "type" => kind,
           "name" => name,
+          "description" => description,
           "value" => value,
           "unit" => unit,
           "recorded_at" => recorded_at,
