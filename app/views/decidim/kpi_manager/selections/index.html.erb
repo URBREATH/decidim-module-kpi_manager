@@ -5,6 +5,7 @@
   # qualified here instead.
   i18n_scope = "decidim.kpi_manager.selections.index"
 %>
+<% append_javascript_pack_tag "decidim_kpi_manager" %>
 
 <%= render layout: "layouts/decidim/shared/layout_center", locals: { columns: 10 } do %>
   <h2 class="h3 mb-4"><%= t("#{i18n_scope}.title") %></h2>
@@ -15,14 +16,20 @@
   <% else %>
     <div class="card__grid-grid">
       <% @selections.each do |selection| %>
-        <div class="card__grid kpi-manager-card">
+        <%
+          expandable = selection.description.present?
+          card_classes = ["card__grid", "kpi-manager-card"]
+          card_classes << "kpi-manager-card--expandable" if expandable
+        %>
+        <div class="<%= card_classes.join(" ") %>"
+             <% if expandable %>role="button" tabindex="0" aria-expanded="false" data-kpi-manager-expand<% end %>>
           <div class="card__grid-text">
             <div class="kpi-manager-card__icon">
               <%= icon "bar-chart-2-line", class: "w-5 h-5 text-white fill-current" %>
             </div>
             <h3 class="h4 text-secondary"><%= selection.name %></h3>
             <% if selection.description.present? %>
-              <p class="text-sm text-gray-2"><%= truncate(selection.description, length: 140) %></p>
+              <p class="text-sm text-gray-2 kpi-manager-card__description"><%= selection.description %></p>
             <% end %>
             <p class="kpi-manager-card__value">
               <%= selection.value %> <span class="kpi-manager-card__unit"><%= selection.unit %></span>

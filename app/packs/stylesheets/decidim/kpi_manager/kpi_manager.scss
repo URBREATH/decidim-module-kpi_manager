@@ -26,6 +26,21 @@
     font-weight: 400;
     color: var(--gray-2, #666);
   }
+
+  &__description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  &--expandable {
+    cursor: pointer;
+  }
+
+  &--expandable[aria-expanded="true"] &__description {
+    -webkit-line-clamp: unset;
+  }
 }
 
 // Inline card rendered by Decidim::ContentRenderers::KpiRenderer wherever a
