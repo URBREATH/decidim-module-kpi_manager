@@ -32,7 +32,7 @@
                 <div><%= icon "map-pin-line" %><%= selection.source %></div>
               <% end %>
               <% if selection.recorded_at.present? %>
-                <div><%= icon "calendar-line" %><%= selection.recorded_at %></div>
+                <div title="<%= t("#{i18n_scope}.last_update") %>"><%= icon "calendar-line" %><%= selection.recorded_at %></div>
               <% end %>
             </div>
             <p class="text-sm text-gray-2 mt-2">

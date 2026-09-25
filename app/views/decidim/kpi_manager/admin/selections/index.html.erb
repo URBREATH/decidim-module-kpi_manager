@@ -26,7 +26,7 @@
                 <% end %>
               </td>
               <td data-label="<%= t(".value") %>"><%= selection.value %> <%= selection.unit %></td>
-              <td data-label="<%= t(".updated") %>"><%= l selection.created_at, format: :decidim_short %></td>
+              <td data-label="<%= t(".updated") %>"><%= selection.recorded_at %></td>
               <td class="table-list__actions" data-label="<%= t(".actions") %>">
                 <%= icon_link_to "delete-bin-line", selection_path(selection), t(".remove"), method: :delete, data: { confirm: t(".confirm") } %>
               </td>
@@ -54,6 +54,7 @@
             <th><%= t(".name") %></th>
             <th><%= t(".value") %></th>
             <th><%= t(".source") %></th>
+            <th><%= t(".updated") %></th>
             <th class="w-32"><span class="sr-only"><%= t(".add") %></span></th>
           </tr>
         </thead>
@@ -68,6 +69,7 @@
               </td>
               <td data-label="<%= t(".value") %>"><%= item["value"] %> <%= item["unit"] %></td>
               <td data-label="<%= t(".source") %>"><%= item["source"] %></td>
+              <td data-label="<%= t(".updated") %>"><%= item["recorded_at"] %></td>
               <td class="table-list__actions" data-label="<%= t(".add") %>">
                 <%= button_to t(".add"), selections_path(external_id: item["id"], kind: item["type"]), method: :post, class: "button button__sm button__secondary" %>
               </td>

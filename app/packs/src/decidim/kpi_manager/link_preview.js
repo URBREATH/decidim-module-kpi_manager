@@ -84,7 +84,7 @@ const openCard = (link) => {
       </p>
       <div class="card__grid-metadata">
         ${data.source ? `<div>${iconSvg("map-pin-line")}${escapeHtml(data.source)}</div>` : ""}
-        ${data.recordedAt ? `<div>${iconSvg("calendar-line")}${escapeHtml(data.recordedAt)}</div>` : ""}
+        ${data.recordedAt ? `<div title="Last update">${iconSvg("calendar-line")}${escapeHtml(data.recordedAt)}</div>` : ""}
       </div>
       ${data.featuredBy ? `<p class="text-sm text-gray-2 mt-2">${iconSvg("user-line", "inline-block")} ${escapeHtml(data.featuredBy)}</p>` : ""}
     </div>
