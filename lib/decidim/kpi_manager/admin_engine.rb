@@ -10,7 +10,9 @@ module Decidim
       paths["lib/tasks"] = nil
 
       routes do
-        resources :selections, only: [:index, :create, :destroy]
+        resources :selections, only: [:index, :create, :destroy] do
+          member { patch :refresh }
+        end
         root to: "selections#index"
       end
 

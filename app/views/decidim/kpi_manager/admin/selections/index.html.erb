@@ -13,7 +13,7 @@
             <th><%= t(".name") %></th>
             <th><%= t(".value") %></th>
             <th><%= t(".updated") %></th>
-            <th class="w-16"><span class="sr-only"><%= t(".actions") %></span></th>
+            <th class="w-32"><span class="sr-only"><%= t(".actions") %></span></th>
           </tr>
         </thead>
         <tbody>
@@ -28,6 +28,7 @@
               <td data-label="<%= t(".value") %>"><%= selection.value %> <%= selection.unit %></td>
               <td data-label="<%= t(".updated") %>"><%= selection.recorded_at %></td>
               <td class="table-list__actions" data-label="<%= t(".actions") %>">
+                <%= icon_link_to "refresh-line", refresh_selection_path(selection), t(".refresh"), method: :patch %>
                 <%= icon_link_to "delete-bin-line", selection_path(selection), t(".remove"), method: :delete, data: { confirm: t(".confirm") } %>
               </td>
             </tr>

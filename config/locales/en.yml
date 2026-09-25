@@ -26,6 +26,9 @@ en:
             not_found: That KPI or measure could not be found.
           destroy:
             success: The KPI was removed.
+          refresh:
+            success: The KPI was refreshed from the API.
+            not_found: That KPI or measure could not be found anymore.
           index:
             featured_title: Featured KPIs & measures
             empty: Nothing has been featured yet.
@@ -39,4 +42,5 @@ en:
             actions: Actions
             add: Add
             remove: Remove
+            refresh: Refresh from the API
             confirm: Are you sure you want to remove this KPI from the public list?
