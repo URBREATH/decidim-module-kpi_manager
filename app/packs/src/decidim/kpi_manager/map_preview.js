@@ -1,12 +1,12 @@
-// Renders a small, non-interactive map (OpenStreetMap tiles via Leaflet,
-// already a dependency of this app - no API key, no Decidim.maps config
-// needed) in a KPI card's [data-kpi-manager-map] container (see
-// decidim/kpi_manager/selections/index.html.erb). It is decorative only:
-// no dragging/zooming. The container is a small square by default and
-// grows into a full map when the card is expanded (see the stylesheet and
-// card_expand.js, which calls invalidateSize()/setZoom() after that resize
-// - Leaflet caches the size/zoom it had at init and doesn't notice a
-// CSS-driven resize on its own).
+// Renders a map (OpenStreetMap tiles via Leaflet, already a dependency of
+// this app - no API key, no Decidim.maps config needed) in a KPI card's
+// [data-kpi-manager-map] container (see decidim/kpi_manager/selections/
+// index.html.erb). A small square, locked/decorative thumbnail by default;
+// once the card is expanded it grows (still square, see the stylesheet) and
+// becomes a real, navigable map (see setInteractive, called from
+// card_expand.js alongside invalidateSize()/setZoom() - Leaflet caches the
+// size/zoom it had at init and doesn't notice a CSS-driven resize on its
+// own).
 
 import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -15,8 +15,8 @@ import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
 
 // City-level zoom in both states - close enough to place the point, far
 // enough out to still recognize the city around it.
-export const COLLAPSED_ZOOM = 10;
-export const EXPANDED_ZOOM = 12;
+export const COLLAPSED_ZOOM = 8;
+export const EXPANDED_ZOOM = 10;
 
 // Leaflet's own pin, scaled down (its default size, ~25x41, is too big for
 // a 56px thumbnail) - same familiar shape, just smaller, rather than a
@@ -59,9 +59,34 @@ const initMap = (container) => {
 
   L.marker([lat, lng], { icon: markerIcon }).addTo(map);
 
-  // Stashed so card_expand.js can call invalidateSize()/setZoom() on it once
-  // the container is resized (small square <-> full map).
+  // Stashed so card_expand.js can call invalidateSize()/setZoom()/
+  // setInteractive() on it once the container is resized (small locked
+  // square <-> full navigable map).
   container.kpiManagerMap = map;
+};
+
+// Turns dragging/scroll-zoom/etc. on or off - only meaningful once the card
+// is expanded into a full-size map; the 56px collapsed thumbnail stays a
+// locked decorative preview regardless.
+export const setInteractive = (container, enabled) => {
+  const map = container?.kpiManagerMap;
+
+  if (!map) {
+    return;
+  }
+
+  [map.dragging, map.scrollWheelZoom, map.doubleClickZoom, map.boxZoom, map.keyboard].forEach((handler) => {
+    handler[enabled ? "enable" : "disable"]();
+  });
+
+  if (enabled && !map.kpiManagerZoomControl) {
+    map.kpiManagerZoomControl = L.control.zoom().addTo(map);
+  } else if (!enabled && map.kpiManagerZoomControl) {
+    map.removeControl(map.kpiManagerZoomControl);
+    map.kpiManagerZoomControl = null;
+  }
+
+  container.classList.toggle("kpi-manager-card__map--interactive", enabled);
 };
 
 const scan = () => document.querySelectorAll("[data-kpi-manager-map]:not([data-loaded])").forEach((container) => {
