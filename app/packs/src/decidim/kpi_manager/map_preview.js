@@ -2,13 +2,11 @@
 // already a dependency of this app - no API key, no Decidim.maps config
 // needed) in a KPI card's [data-kpi-manager-map] container (see
 // decidim/kpi_manager/selections/index.html.erb). It is decorative only:
-// no dragging/zooming.
-//
-// Not initialized on page load: the container starts hidden
-// (display: none, inside .kpi-manager-card__details) until the card is
-// expanded, and Leaflet can't size a map inside a hidden element. Instead,
-// initMapIfNeeded is called from card_expand.js right after a card is
-// expanded, when the container is actually visible.
+// no dragging/zooming. The container is a small square by default and
+// grows into a full map when the card is expanded (see the stylesheet and
+// card_expand.js, which calls invalidateSize() after that resize - Leaflet
+// caches the size it had at init and doesn't notice CSS-driven resizes on
+// its own).
 
 import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -24,19 +22,13 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow
 });
 
-export const initMapIfNeeded = (container) => {
-  if (!container || container.dataset.loaded) {
-    return;
-  }
-
+const initMap = (container) => {
   const lat = parseFloat(container.dataset.lat);
   const lng = parseFloat(container.dataset.lng);
 
   if (Number.isNaN(lat) || Number.isNaN(lng)) {
     return;
   }
-
-  container.dataset.loaded = "true";
 
   const map = L.map(container, {
     center: [lat, lng],
@@ -58,7 +50,17 @@ export const initMapIfNeeded = (container) => {
 
   L.marker([lat, lng]).addTo(map);
 
-  // The container had a size of 0x0 while hidden; now that it's visible,
-  // Leaflet needs to recompute it or the tiles render offset/cropped.
-  requestAnimationFrame(() => map.invalidateSize());
+  // Stashed so card_expand.js can call invalidateSize() on it once the
+  // container is resized (small square <-> full map).
+  container.kpiManagerMap = map;
 };
+
+const scan = () => document.querySelectorAll("[data-kpi-manager-map]:not([data-loaded])").forEach((container) => {
+  container.dataset.loaded = "true";
+  initMap(container);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  scan();
+  new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
+});

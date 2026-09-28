@@ -25,19 +25,18 @@
             <h3 class="h4 text-secondary"><%= selection.name %></h3>
             <p class="kpi-manager-card__value">
               <%= selection.value %> <span class="kpi-manager-card__unit"><%= selection.unit %></span>
-              <% if selection.geolocated? %>
-                <%= icon "map-pin-line", class: "kpi-manager-card__map-hint", aria_label: t("#{i18n_scope}.has_map") %>
-              <% end %>
             </p>
 
-            <%# Everything below only shows once the card is expanded. %>
+            <% if selection.description.present? %>
+              <p class="text-sm text-gray-2 kpi-manager-card__description"><%= selection.description %></p>
+            <% end %>
+
+            <% if selection.geolocated? %>
+              <div class="kpi-manager-card__map" data-kpi-manager-map data-lat="<%= selection.latitude %>" data-lng="<%= selection.longitude %>"></div>
+            <% end %>
+
+            <%# Metadata (source/date/author) only shows once the card is expanded. %>
             <div class="kpi-manager-card__details">
-              <% if selection.description.present? %>
-                <p class="text-sm text-gray-2"><%= selection.description %></p>
-              <% end %>
-              <% if selection.geolocated? %>
-                <div class="kpi-manager-card__map" data-kpi-manager-map data-lat="<%= selection.latitude %>" data-lng="<%= selection.longitude %>"></div>
-              <% end %>
               <div class="card__grid-metadata">
                 <% if selection.source.present? %>
                   <div><%= icon "map-pin-line" %><%= selection.source %></div>
@@ -50,6 +49,15 @@
                 <%= icon "user-line", class: "inline-block" %> <%= t("#{i18n_scope}.featured_by", name: present(selection.author).name) %>
               </p>
             </div>
+
+            <p class="kpi-manager-card__toggle">
+              <span class="kpi-manager-card__toggle-label kpi-manager-card__toggle-label--show">
+                <%= t("#{i18n_scope}.show_more") %> <%= icon "arrow-down-s-line" %>
+              </span>
+              <span class="kpi-manager-card__toggle-label kpi-manager-card__toggle-label--hide">
+                <%= t("#{i18n_scope}.show_less") %> <%= icon "arrow-up-s-line" %>
+              </span>
+            </p>
           </div>
         </div>
       <% end %>

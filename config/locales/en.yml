@@ -19,7 +19,8 @@ en:
           empty: Nothing has been featured here yet.
           featured_by: "Featured by %{name}"
           last_update: Last update
-          has_map: This KPI has a location map
+          show_more: Show more
+          show_less: Show less
       admin:
         selections:
           create:
