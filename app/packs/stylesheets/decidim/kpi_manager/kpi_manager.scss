@@ -81,6 +81,18 @@
     }
   }
 
+  // The dot marking the KPI's location (see map_preview.js's markerIcon) -
+  // a small centered circle instead of Leaflet's default pin, which is
+  // anchored at its bottom tip and too large/detailed to read at 56px.
+  &__marker {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--secondary);
+    border: 2px solid white;
+    box-shadow: 0 0 2px rgb(0 0 0 / 40%);
+  }
+
   &__icon {
     display: flex;
     align-items: center;

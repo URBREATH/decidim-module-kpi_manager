@@ -5,16 +5,22 @@
 // already in the DOM - except for the map's container, which changes size
 // via CSS and needs Leaflet explicitly told to recompute it afterwards.
 
+import { COLLAPSED_ZOOM, EXPANDED_ZOOM } from "src/decidim/kpi_manager/map_preview";
+
 const toggleCard = (card) => {
-  const expanded = card.getAttribute("aria-expanded") === "true";
-  card.setAttribute("aria-expanded", (!expanded).toString());
+  const wasExpanded = card.getAttribute("aria-expanded") === "true";
+  const expanded = !wasExpanded;
+  card.setAttribute("aria-expanded", expanded.toString());
 
   const map = card.querySelector("[data-kpi-manager-map]")?.kpiManagerMap;
 
   if (map) {
     // Let the CSS width/height transition run before Leaflet measures the
     // container again, or it picks up the pre-transition size.
-    setTimeout(() => map.invalidateSize(), 210);
+    setTimeout(() => {
+      map.invalidateSize();
+      map.setZoom(expanded ? EXPANDED_ZOOM : COLLAPSED_ZOOM);
+    }, 210);
   }
 };
 
