@@ -59,11 +59,13 @@
     overflow: hidden;
     transition: width 0.2s ease, height 0.2s ease;
 
-    // Attribution stays visible - required by OpenStreetMap's tile usage
-    // policy - just shrunk down since this map is a small decorative preview.
+    // Hidden at this tiny size - it's unreadable and just clutters a
+    // 56px thumbnail - but it comes back once expanded (below): the
+    // OpenStreetMap tile usage policy requires attribution to be shown
+    // wherever the map is actually being used, not on every last thumbnail
+    // of it on the page.
     .leaflet-control-attribution {
-      font-size: 0.55rem;
-      padding: 0 0.2rem;
+      display: none;
     }
   }
 
@@ -71,6 +73,12 @@
     width: 100%;
     height: 260px;
     margin-top: 0.5rem;
+
+    .leaflet-control-attribution {
+      display: block;
+      font-size: 0.6rem;
+      padding: 0 0.25rem;
+    }
   }
 
   &__icon {
