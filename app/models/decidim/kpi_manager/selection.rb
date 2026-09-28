@@ -22,8 +22,14 @@ module Decidim
           "value" => value,
           "unit" => unit,
           "recorded_at" => recorded_at,
-          "source" => source
+          "source" => source,
+          "latitude" => latitude,
+          "longitude" => longitude
         }
+      end
+
+      def geolocated?
+        latitude.present? && longitude.present?
       end
     end
   end

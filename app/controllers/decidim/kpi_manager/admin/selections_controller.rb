@@ -67,7 +67,7 @@ module Decidim
         private
 
         def snapshot(item)
-          item.slice("name", "description", "value", "unit", "recorded_at", "source")
+          item.slice("name", "description", "value", "unit", "recorded_at", "source", "latitude", "longitude")
         end
 
         def find_in_catalog(external_id, kind)

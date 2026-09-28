@@ -42,6 +42,9 @@
                 <div><%= icon "calendar-line" %><%= t("#{i18n_scope}.last_update") %>: <%= selection.recorded_at %></div>
               <% end %>
             </div>
+            <% if selection.geolocated? %>
+              <div class="kpi-manager-card__map" data-kpi-manager-map data-lat="<%= selection.latitude %>" data-lng="<%= selection.longitude %>"></div>
+            <% end %>
             <p class="text-sm text-gray-2 mt-2">
               <%= icon "user-line", class: "inline-block" %> <%= t("#{i18n_scope}.featured_by", name: present(selection.author).name) %>
             </p>

@@ -6,3 +6,6 @@ require.context("../images", true)
 
 // Card expand behaviour for the public gallery (see selections/index.html.erb)
 import "src/decidim/kpi_manager/card_expand";
+
+// Small map preview for geolocated KPIs (see selections/index.html.erb)
+import "src/decidim/kpi_manager/map_preview";

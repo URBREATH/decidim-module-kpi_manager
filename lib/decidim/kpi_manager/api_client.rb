@@ -102,6 +102,8 @@ module Decidim
           "target" => item.dig("definition", "targetValue"),
           "recorded_at" => (item["lastUpdate"] || item["recorded_at"] || item["timestamp"] || item["updatedAt"]).to_s[0, 10].presence,
           "source" => item["context"] || "URBREATH KPI Manager",
+          "latitude" => item.dig("definition", "geolocation", "latitude") || item["latitude"],
+          "longitude" => item.dig("definition", "geolocation", "longitude") || item["longitude"],
           "raw" => item
         }
       end
