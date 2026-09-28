@@ -70,10 +70,10 @@
   }
 
   &--collapsible[aria-expanded="true"] &__map {
-    // Square here too (not a wide rectangle stretched to the card's full
-    // row width) - capped so it doesn't get huge on a very wide card.
-    width: min(100%, 22rem);
-    aspect-ratio: 1;
+    // 4:3, not a wide rectangle stretched to the card's full row width -
+    // capped so it doesn't get huge on a very wide card.
+    width: min(100%, 28rem);
+    aspect-ratio: 4 / 3;
     height: auto;
     margin: 0.5rem auto 0;
 
