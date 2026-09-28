@@ -1,11 +1,19 @@
 // Expands a KPI/measure card in the public gallery on click (or Enter/Space)
-// to show its full description, instead of the 2-line clamp shown by
-// default. Purely a CSS toggle - the full text is already in the DOM (see
-// .kpi-manager-card__description in the stylesheet), so no fetch involved.
+// to reveal its description, map and other details, hidden by default (see
+// .kpi-manager-card__details in the stylesheet). Toggling is a plain
+// attribute/CSS change - the content is already in the DOM - except for the
+// map, which is only initialized the first time a card is expanded (see
+// map_preview.js for why).
+
+import { initMapIfNeeded } from "src/decidim/kpi_manager/map_preview";
 
 const toggleCard = (card) => {
   const expanded = card.getAttribute("aria-expanded") === "true";
   card.setAttribute("aria-expanded", (!expanded).toString());
+
+  if (!expanded) {
+    initMapIfNeeded(card.querySelector("[data-kpi-manager-map]"));
+  }
 };
 
 document.addEventListener("click", (event) => {

@@ -16,38 +16,40 @@
   <% else %>
     <div class="card__grid-grid">
       <% @selections.each do |selection| %>
-        <%
-          expandable = selection.description.present?
-          card_classes = ["card__grid", "kpi-manager-card"]
-          card_classes << "kpi-manager-card--expandable" if expandable
-        %>
-        <div class="<%= card_classes.join(" ") %>"
-             <% if expandable %>role="button" tabindex="0" aria-expanded="false" data-kpi-manager-expand<% end %>>
+        <div class="card__grid kpi-manager-card kpi-manager-card--collapsible"
+             role="button" tabindex="0" aria-expanded="false" data-kpi-manager-expand>
           <div class="card__grid-text">
             <div class="kpi-manager-card__icon">
               <%= icon "bar-chart-2-line", class: "w-5 h-5 text-white fill-current" %>
             </div>
             <h3 class="h4 text-secondary"><%= selection.name %></h3>
-            <% if selection.description.present? %>
-              <p class="text-sm text-gray-2 kpi-manager-card__description"><%= selection.description %></p>
-            <% end %>
             <p class="kpi-manager-card__value">
               <%= selection.value %> <span class="kpi-manager-card__unit"><%= selection.unit %></span>
+              <% if selection.geolocated? %>
+                <%= icon "map-pin-line", class: "kpi-manager-card__map-hint", aria_label: t("#{i18n_scope}.has_map") %>
+              <% end %>
             </p>
-            <div class="card__grid-metadata">
-              <% if selection.source.present? %>
-                <div><%= icon "map-pin-line" %><%= selection.source %></div>
+
+            <%# Everything below only shows once the card is expanded. %>
+            <div class="kpi-manager-card__details">
+              <% if selection.description.present? %>
+                <p class="text-sm text-gray-2"><%= selection.description %></p>
               <% end %>
-              <% if selection.recorded_at.present? %>
-                <div><%= icon "calendar-line" %><%= t("#{i18n_scope}.last_update") %>: <%= selection.recorded_at %></div>
+              <% if selection.geolocated? %>
+                <div class="kpi-manager-card__map" data-kpi-manager-map data-lat="<%= selection.latitude %>" data-lng="<%= selection.longitude %>"></div>
               <% end %>
+              <div class="card__grid-metadata">
+                <% if selection.source.present? %>
+                  <div><%= icon "map-pin-line" %><%= selection.source %></div>
+                <% end %>
+                <% if selection.recorded_at.present? %>
+                  <div><%= icon "calendar-line" %><%= t("#{i18n_scope}.last_update") %>: <%= selection.recorded_at %></div>
+                <% end %>
+              </div>
+              <p class="text-sm text-gray-2 mt-2">
+                <%= icon "user-line", class: "inline-block" %> <%= t("#{i18n_scope}.featured_by", name: present(selection.author).name) %>
+              </p>
             </div>
-            <% if selection.geolocated? %>
-              <div class="kpi-manager-card__map" data-kpi-manager-map data-lat="<%= selection.latitude %>" data-lng="<%= selection.longitude %>"></div>
-            <% end %>
-            <p class="text-sm text-gray-2 mt-2">
-              <%= icon "user-line", class: "inline-block" %> <%= t("#{i18n_scope}.featured_by", name: present(selection.author).name) %>
-            </p>
           </div>
         </div>
       <% end %>

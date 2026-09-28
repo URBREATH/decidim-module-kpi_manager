@@ -1,9 +1,14 @@
 // Renders a small, non-interactive map (OpenStreetMap tiles via Leaflet,
 // already a dependency of this app - no API key, no Decidim.maps config
-// needed) in any KPI card that has a geolocation (see
+// needed) in a KPI card's [data-kpi-manager-map] container (see
 // decidim/kpi_manager/selections/index.html.erb). It is decorative only:
-// no dragging/zooming, so it doesn't fight with the card's own
-// click-to-expand behaviour (see card_expand.js).
+// no dragging/zooming.
+//
+// Not initialized on page load: the container starts hidden
+// (display: none, inside .kpi-manager-card__details) until the card is
+// expanded, and Leaflet can't size a map inside a hidden element. Instead,
+// initMapIfNeeded is called from card_expand.js right after a card is
+// expanded, when the container is actually visible.
 
 import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -19,7 +24,11 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow
 });
 
-const initMap = (container) => {
+export const initMapIfNeeded = (container) => {
+  if (!container || container.dataset.loaded) {
+    return;
+  }
+
   const lat = parseFloat(container.dataset.lat);
   const lng = parseFloat(container.dataset.lng);
 
@@ -27,9 +36,11 @@ const initMap = (container) => {
     return;
   }
 
+  container.dataset.loaded = "true";
+
   const map = L.map(container, {
     center: [lat, lng],
-    zoom: 12,
+    zoom: 13,
     dragging: false,
     scrollWheelZoom: false,
     doubleClickZoom: false,
@@ -46,14 +57,8 @@ const initMap = (container) => {
   }).addTo(map);
 
   L.marker([lat, lng]).addTo(map);
+
+  // The container had a size of 0x0 while hidden; now that it's visible,
+  // Leaflet needs to recompute it or the tiles render offset/cropped.
+  requestAnimationFrame(() => map.invalidateSize());
 };
-
-const scan = () => document.querySelectorAll("[data-kpi-manager-map]:not([data-loaded])").forEach((container) => {
-  container.dataset.loaded = "true";
-  initMap(container);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  scan();
-  new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
-});
