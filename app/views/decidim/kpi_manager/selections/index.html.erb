@@ -19,21 +19,29 @@
         <div class="card__grid kpi-manager-card kpi-manager-card--collapsible"
              role="button" tabindex="0" aria-expanded="false" data-kpi-manager-expand>
           <div class="card__grid-text">
-            <div class="kpi-manager-card__icon">
-              <%= icon "bar-chart-2-line", class: "w-5 h-5 text-white fill-current" %>
+            <%# Row layout keeps the collapsed card compact: text on the
+                left, the (small, growing on expand) map on the right,
+                instead of everything stacked in one tall column. %>
+            <div class="kpi-manager-card__row">
+              <div class="kpi-manager-card__main">
+                <div class="kpi-manager-card__header">
+                  <div class="kpi-manager-card__icon">
+                    <%= icon "bar-chart-2-line", class: "w-4 h-4 text-white fill-current" %>
+                  </div>
+                  <h3 class="h4 text-secondary"><%= selection.name %></h3>
+                </div>
+                <p class="kpi-manager-card__value">
+                  <%= selection.value %> <span class="kpi-manager-card__unit"><%= selection.unit %></span>
+                </p>
+                <% if selection.description.present? %>
+                  <p class="text-sm text-gray-2 kpi-manager-card__description"><%= selection.description %></p>
+                <% end %>
+              </div>
+
+              <% if selection.geolocated? %>
+                <div class="kpi-manager-card__map" data-kpi-manager-map data-lat="<%= selection.latitude %>" data-lng="<%= selection.longitude %>"></div>
+              <% end %>
             </div>
-            <h3 class="h4 text-secondary"><%= selection.name %></h3>
-            <p class="kpi-manager-card__value">
-              <%= selection.value %> <span class="kpi-manager-card__unit"><%= selection.unit %></span>
-            </p>
-
-            <% if selection.description.present? %>
-              <p class="text-sm text-gray-2 kpi-manager-card__description"><%= selection.description %></p>
-            <% end %>
-
-            <% if selection.geolocated? %>
-              <div class="kpi-manager-card__map" data-kpi-manager-map data-lat="<%= selection.latitude %>" data-lng="<%= selection.longitude %>"></div>
-            <% end %>
 
             <%# Metadata (source/date/author) only shows once the card is expanded. %>
             <div class="kpi-manager-card__details">
