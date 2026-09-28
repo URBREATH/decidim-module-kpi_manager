@@ -9,17 +9,26 @@
 // CSS-driven resize on its own).
 
 import L from "leaflet";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIconUrl from "leaflet/dist/images/marker-icon.png";
+import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
 
-export const COLLAPSED_ZOOM = 12;
-export const EXPANDED_ZOOM = 15;
+// City-level zoom in both states - close enough to place the point, far
+// enough out to still recognize the city around it.
+export const COLLAPSED_ZOOM = 10;
+export const EXPANDED_ZOOM = 12;
 
-// A small centered dot instead of Leaflet's default pin (which is anchored
-// at its bottom tip, not its center, and too large/detailed to read well at
-// 56px) - styled in the stylesheet as .kpi-manager-card__marker.
-const markerIcon = L.divIcon({
-  className: "kpi-manager-card__marker",
-  iconSize: [10, 10],
-  iconAnchor: [5, 5]
+// Leaflet's own pin, scaled down (its default size, ~25x41, is too big for
+// a 56px thumbnail) - same familiar shape, just smaller, rather than a
+// different marker style.
+const markerIcon = L.icon({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIconUrl,
+  shadowUrl: markerShadowUrl,
+  iconSize: [16, 26],
+  iconAnchor: [8, 26],
+  shadowSize: [26, 26],
+  shadowAnchor: [8, 26]
 });
 
 const initMap = (container) => {
