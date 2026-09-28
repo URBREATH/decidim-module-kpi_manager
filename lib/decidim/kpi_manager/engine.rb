@@ -25,6 +25,21 @@ module Decidim
         Decidim.content_processors += [:kpi]
       end
 
+      # Decidim's default Content-Security-Policy only allows img-src/
+      # connect-src from *.hereapi.com (its documented default map
+      # provider), regardless of whether Decidim.maps is actually
+      # configured. The KPI card's map uses OpenStreetMap tiles directly via
+      # Leaflet (see map_preview.js), so those need to be allowed too, or
+      # the browser silently blocks the tile images (the marker still shows,
+      # since it's a same-origin bundled asset - only the tiles are affected).
+      initializer "KpiManager.content_security_policy" do
+        extra = Decidim.content_security_policies_extra.dup
+        %w(img-src connect-src).each do |directive|
+          extra[directive] = Array(extra[directive]) + ["*.tile.openstreetmap.org"]
+        end
+        Decidim.content_security_policies_extra = extra
+      end
+
       initializer "KpiManager.shakapacker.assets_path" do
         Decidim.register_assets_path File.expand_path("app/packs", root)
       end
