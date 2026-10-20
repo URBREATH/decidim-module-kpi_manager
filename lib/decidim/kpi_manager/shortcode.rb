@@ -11,8 +11,21 @@ module Decidim
     # "[[KPI: AvgTempAthens | 22.37 °C | ATHENS | 2026-09-08]]" - so it stays
     # legible while it's still raw text in the editor, before it gets
     # rendered into a card.
+    #
+    # Comments (plain text, whose sanitizer strips every link) get the tag
+    # with the featured selection's id, e.g. "[[KPI#17: AvgTempAthens | ...]]"
+    # (see kpi_modal.js), which KpiRenderer turns into a link to that KPI's
+    # card in the gallery. A past measurement adds its ISO 8601 time, e.g.
+    # "[[KPI#17@2025-11-03T13:00:06Z: AvgTempTallin | 12.93 °C | ...]]",
+    # and the chart of a period its granularity and first/last days, e.g.
+    # "[[KPI#17~month/2026-09-01/2026-10-31: AvgTempAthens | ...]]".
     module Shortcode
-      TAG_REGEX = /\[\[KPI:\s*([^\]]+)\]\]/i
+      ISO_TIME = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})/
+      DAY = /\d{4}-\d{2}-\d{2}/
+      PERIOD = %r{~(day|month|year)/(#{DAY})/(#{DAY})}
+      # Captures: 1 selection id, 2 measurement time, 3-5 period granularity,
+      # first and last day, 6 readable body.
+      TAG_REGEX = /\[\[KPI(?:#(\d+)(?:@(#{ISO_TIME})|#{PERIOD})?)?:\s*([^\]]+)\]\]/i
 
       def self.build(item)
         value_and_unit = [item["value"], item["unit"]].compact_blank.join(" ")

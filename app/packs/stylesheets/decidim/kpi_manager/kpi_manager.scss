@@ -135,6 +135,15 @@
     display: none;
   }
 
+  // Chart.js canvas (see chart_preview.js), set to fill this box
+  // (maintainAspectRatio: false), so the height is fixed here.
+  &__chart {
+    position: relative;
+    height: 14rem;
+    margin: 0.75rem 0;
+    cursor: default;
+  }
+
   &--collapsible[aria-expanded="true"] &__details {
     display: block;
   }
@@ -196,6 +205,15 @@
   }
 }
 
+// Bulk buttons above the admin's featured KPIs list
+// (admin/selections/index.html.erb).
+.kpi-manager-bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 // Link inserted by the editor button (see editor_button.js), rendered
 // wherever that content is later displayed (proposals, blog posts, ...).
 .kpi-manager-link {
@@ -203,6 +221,7 @@
   text-underline-offset: 2px;
   cursor: help;
 }
+
 
 // Detail card shown on hover/focus of a .kpi-manager-link (see
 // link_preview.js). Also custom: not a Decidim tooltip/popover component.
@@ -229,58 +248,247 @@
   }
 }
 
-// "Insert KPI" dropdown opened from the rich text editor toolbar
-// (editor_button.js). Also custom: the editor toolbar has no built-in
-// picker/search dropdown to extend.
-.kpi-manager-picker {
-  position: absolute;
-  z-index: 50;
-  width: min(28rem, 92vw);
-  max-height: 20rem;
-  overflow: auto;
-  padding: 0.5rem;
-  border: 1px solid var(--background-4, #d5d9e0);
-  border-radius: 0.5rem;
-  background: white;
-  box-shadow: 0 6px 20px rgb(0 0 0 / 15%);
+// KPI button in the comment form (rendered by the comment form cell
+// overridden by decidim-idra), sized like the saved datasets star next to it.
+.kpi-manager-comment-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5em;
+  height: 2.5em;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--secondary);
+  cursor: pointer;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+}
+
+// KPI modal (kpi_modal.js), laid out like decidim-idra's "Saved datasets"
+// modal (.idra-modal*) so the two buttons next to each other open the same
+// kind of dialog; own classes, so it doesn't depend on that module.
+.kpi-manager-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3990;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(0 0 0 / 50%);
+}
+
+.kpi-manager-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(720px, 95%);
+  max-height: 85vh;
+  padding: 28px 28px 24px;
+  border-radius: 16px;
+  background-color: #fff;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 20%);
+  overflow: hidden;
+
+  &__header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 0 2.5rem;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  &__back {
+    color: var(--secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  &__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 2.2rem;
+    height: 2.2rem;
+    color: var(--secondary);
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+  }
 
   &__search {
-    width: 100%;
-    margin-bottom: 0.5rem;
+    align-self: flex-start;
+    width: 320px;
+    max-width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  &__scroll {
+    max-height: 55vh;
+    padding: 12px;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    overflow-y: auto;
   }
 
   &__item {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    padding: 0.4rem 0.5rem;
-    border: 0;
-    border-radius: 0.25rem;
-    background: transparent;
-    text-align: left;
-    cursor: pointer;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 8px;
+    border-radius: 6px;
 
-    &:hover,
-    &:focus {
-      background: var(--background);
+    &:hover {
+      background-color: rgb(0 0 0 / 6%);
     }
+  }
+
+  &__info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 10rem;
+  }
+
+  &__meta {
+    color: var(--gray-2, #666);
+    font-size: 0.8rem;
   }
 
   &__value {
     color: var(--secondary);
-    font-weight: 600;
+    font-weight: 700;
     white-space: nowrap;
   }
 
-  &__meta {
-    display: block;
-    color: var(--gray-2, #666);
-    font-size: 0.8rem;
+  &__actions {
+    display: flex;
+    gap: 0.4rem;
   }
 
   &__empty {
     padding: 0.5rem;
     color: var(--gray-2, #666);
+  }
+
+  &__chart {
+    position: relative;
+    flex: none;
+    height: 12rem;
+  }
+
+  // Period picker: unit (days/months/years), then its two ends.
+  &__period,
+  &__bounds {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem 1rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    input,
+    select {
+      width: auto;
+      min-width: 9rem;
+      font-weight: 400;
+    }
+  }
+
+  &__summary {
+    margin: 0;
+    color: var(--gray-2, #666);
+    font-size: 0.85rem;
+  }
+
+  &__points {
+    max-height: 22vh;
+    padding: 4px;
+  }
+
+  &__count {
+    flex: 1;
+    padding: 0 1rem;
+    font-size: 0.8rem;
+    opacity: 0.75;
+  }
+
+  &__point {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-align: left;
+
+    &:hover {
+      background-color: rgb(0 0 0 / 6%);
+    }
+
+    &[aria-pressed="true"] {
+      background-color: var(--secondary);
+      color: #fff;
+    }
+  }
+
+  &__insert-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+}
+
+// Chart of a period drawn after a KPI link in published content (see
+// inline_chart.js); a span made a block, as it sits inside the paragraph.
+.kpi-manager-inline-chart {
+  position: relative;
+  display: block;
+  max-width: 640px;
+  margin: 0.75rem 0;
+  padding: 12px;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+
+  &__title {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  &__area {
+    position: relative;
+    display: block;
+    height: 220px;
   }
 }

@@ -10,3 +10,6 @@ import "src/decidim/kpi_manager/card_expand";
 // Small map preview shown on every geolocated KPI card, small by default
 // and grown when the card is expanded
 import "src/decidim/kpi_manager/map_preview";
+
+// Chart of the KPI's value history, shown once the card is expanded
+import "src/decidim/kpi_manager/chart_preview";

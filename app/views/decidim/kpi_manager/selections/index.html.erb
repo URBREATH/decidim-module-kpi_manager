@@ -45,12 +45,23 @@
 
             <%# Metadata (source/date/author) only shows once the card is expanded. %>
             <div class="kpi-manager-card__details">
+              <% if selection.chartable? %>
+                <%# Drawn by chart_preview.js the first time it becomes visible. %>
+                <div class="kpi-manager-card__chart"
+                     data-kpi-manager-chart="<%= selection.chart_data.to_json %>"
+                     data-labels="<%= { value: t("#{i18n_scope}.chart.value"), target: t("#{i18n_scope}.chart.target") }.to_json %>">
+                  <canvas role="img" aria-label="<%= t("#{i18n_scope}.chart.aria_label", name: selection.name) %>"></canvas>
+                </div>
+              <% end %>
               <div class="card__grid-metadata">
                 <% if selection.source.present? %>
                   <div><%= icon "map-pin-line" %><%= selection.source %></div>
                 <% end %>
                 <% if selection.recorded_at.present? %>
                   <div><%= icon "calendar-line" %><%= t("#{i18n_scope}.last_update") %>: <%= selection.recorded_at %></div>
+                <% end %>
+                <% if selection.update_frequency.present? %>
+                  <div><%= icon "time-line" %><%= t("#{i18n_scope}.update_frequency") %>: <%= kpi_update_frequency(selection.update_frequency) %></div>
                 <% end %>
               </div>
               <p class="text-sm text-gray-2 mt-2">

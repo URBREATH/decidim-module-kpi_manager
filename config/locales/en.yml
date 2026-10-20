@@ -12,6 +12,50 @@ en:
         empty: No KPIs found.
         error: Could not load your KPIs.
         featured_by: "Featured by %{name}"
+        modal_title: KPIs & measures
+        close: Close
+        current_value: Current value
+        pick_measurement: Past measurement
+        no_history: No past measurements available yet.
+        back: Back
+        insert_measurement: "Insert %{date}: %{value}"
+        insert_chart: "Insert chart: %{period}"
+        chart_link: "%{name}: chart %{period}"
+        history_error: Could not load the past measurements.
+        period: Period
+        granularity_day: Days
+        granularity_month: Months
+        granularity_year: Years
+        from: From
+        to: To
+        value: Value
+        target: Target
+        daily_average: Daily average
+        monthly_average: Monthly average
+        measurements_count: "%{count} measurements"
+        no_data_in_period: No measurements in this period.
+        hint_raw: Click a measurement to pick it, or insert the chart of the whole period.
+        hint_day: Daily averages. Click a day to see its measurements.
+        hint_month: Monthly averages. Click a month to see its days.
+      update_frequencies:
+        minute:
+          one: Every minute
+          other: Every %{count} minutes
+        hour:
+          one: Every hour
+          other: Every %{count} hours
+        day:
+          one: Every day
+          other: Every %{count} days
+        week:
+          one: Every week
+          other: Every %{count} weeks
+        month:
+          one: Every month
+          other: Every %{count} months
+        year:
+          one: Every year
+          other: Every %{count} years
       selections:
         index:
           title: Featured KPIs & measures
@@ -19,18 +63,39 @@ en:
           empty: Nothing has been featured here yet.
           featured_by: "Featured by %{name}"
           last_update: Last update
+          update_frequency: Update frequency
           show_more: Show more
           show_less: Show less
+          chart:
+            aria_label: "Chart of %{name}"
+            value: Value
+            target: Target
       admin:
         selections:
           create:
             success: The KPI was added.
             not_found: That KPI or measure could not be found.
+            none_selected: Select at least one KPI first.
+            bulk_success:
+              one: 1 KPI was added.
+              other: "%{count} KPIs were added."
+            bulk_partial: "%{count} KPIs were added; these could not be: %{failed}."
           destroy:
             success: The KPI was removed.
           refresh:
             success: The KPI was refreshed from the API.
             not_found: That KPI or measure could not be found anymore.
+          bulk_destroy:
+            none_selected: Select at least one KPI first.
+            success:
+              one: 1 KPI was removed.
+              other: "%{count} KPIs were removed."
+          bulk_refresh:
+            none_selected: Select at least one KPI first.
+            success:
+              one: 1 KPI was refreshed from the API.
+              other: "%{count} KPIs were refreshed from the API."
+            partial: "%{count} KPIs were refreshed; these could not be found anymore: %{failed}."
           index:
             featured_title: Featured KPIs & measures
             empty: Nothing has been featured yet.
@@ -46,3 +111,8 @@ en:
             remove: Remove
             refresh: Refresh from the API
             confirm: Are you sure you want to remove this KPI from the public list?
+            select_all: Select all
+            bulk_refresh: Refresh selected
+            bulk_remove: Remove selected
+            bulk_confirm: Are you sure you want to remove the selected KPIs from the public list?
+            bulk_add: Add selected

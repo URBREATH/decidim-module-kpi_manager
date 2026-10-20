@@ -1,3 +1,5 @@
+<% append_javascript_pack_tag "decidim_kpi_manager_admin" %>
+
 <div class="card mb-4">
   <div class="item_show__header">
     <h2 class="item_show__header-title"><%= t(".featured_title") %></h2>
@@ -6,10 +8,33 @@
   <% if @selections.empty? %>
     <p class="help-text"><%= t(".empty") %></p>
   <% else %>
+    <%# The form itself is the bulk removal (DELETE): Decidim's confirm
+        dialog re-submits the form without the clicked button, so that
+        action can't rely on the button's own name/value/formaction. The
+        refresh button has no confirm, so it overrides method (a later
+        _method wins) and action. See admin/bulk_selection.js for the
+        select all / enabling logic. %>
+    <%= form_tag bulk_destroy_selections_path, method: :delete, data: { kpi_manager_bulk: true } do %>
+      <div class="kpi-manager-bulk-actions">
+        <%= button_tag type: "submit", name: "_method", value: "patch", formaction: bulk_refresh_selections_path,
+                       class: "button button__sm button__secondary", disabled: true,
+                       data: { kpi_manager_bulk_action: true } do %>
+          <%= icon "refresh-line" %> <span><%= t(".bulk_refresh") %></span> <span data-kpi-manager-bulk-count></span>
+        <% end %>
+        <%= button_tag type: "submit", class: "button button__sm button__transparent-secondary", disabled: true,
+                       data: { kpi_manager_bulk_action: true, confirm: t(".bulk_confirm") } do %>
+          <%= icon "delete-bin-line" %> <span><%= t(".bulk_remove") %></span> <span data-kpi-manager-bulk-count></span>
+        <% end %>
+      </div>
     <div class="table-stacked">
       <table class="table-list">
         <thead>
           <tr>
+            <th class="w-8">
+              <%= check_box_tag "kpi_manager_select_all", "1", false, id: "kpi-manager-select-all",
+                                aria: { label: t(".select_all") }, title: t(".select_all"),
+                                data: { kpi_manager_bulk_all: true } %>
+            </th>
             <th><%= t(".name") %></th>
             <th><%= t(".value") %></th>
             <th><%= t(".updated") %></th>
@@ -19,6 +44,10 @@
         <tbody>
           <% @selections.each do |selection| %>
             <tr>
+              <td>
+                <%= check_box_tag "ids[]", selection.id, false, id: "kpi-manager-selection-#{selection.id}",
+                                  aria: { label: selection.name }, data: { kpi_manager_bulk_item: true } %>
+              </td>
               <td data-label="<%= t(".name") %>">
                 <%= selection.name %>
                 <% if selection.description.present? %>
@@ -36,6 +65,7 @@
         </tbody>
       </table>
     </div>
+    <% end %>
   <% end %>
 </div>
 
@@ -48,10 +78,25 @@
   <% if @catalog.blank? %>
     <p class="help-text"><%= t(".catalog_empty") %></p>
   <% else %>
+    <%# Each row already has its own "Add" form (button_to), so the bulk form
+        can't wrap the table: the checkboxes join it through their `form`
+        attribute instead. %>
+    <div data-kpi-manager-bulk>
+      <%= form_tag selections_path, method: :post, id: "kpi-manager-bulk-add", class: "kpi-manager-bulk-actions" do %>
+        <%= button_tag type: "submit", class: "button button__sm button__secondary", disabled: true,
+                       data: { kpi_manager_bulk_action: true } do %>
+          <%= icon "add-line" %> <span><%= t(".bulk_add") %></span> <span data-kpi-manager-bulk-count></span>
+        <% end %>
+      <% end %>
     <div class="table-stacked">
       <table class="table-list">
         <thead>
           <tr>
+            <th class="w-8">
+              <%= check_box_tag "kpi_manager_select_all_catalog", "1", false, id: "kpi-manager-select-all-catalog",
+                                aria: { label: t(".select_all") }, title: t(".select_all"),
+                                data: { kpi_manager_bulk_all: true } %>
+            </th>
             <th><%= t(".name") %></th>
             <th><%= t(".value") %></th>
             <th><%= t(".source") %></th>
@@ -62,6 +107,10 @@
         <tbody>
           <% @catalog.each do |item| %>
             <tr>
+              <td>
+                <%= check_box_tag "items[]", "#{item["type"]}:#{item["id"]}", false, id: "kpi-manager-catalog-#{item["type"]}-#{item["id"]}",
+                                  form: "kpi-manager-bulk-add", aria: { label: item["name"] }, data: { kpi_manager_bulk_item: true } %>
+              </td>
               <td data-label="<%= t(".name") %>">
                 <%= item["name"] %>
                 <% if item["description"].present? %>
@@ -78,6 +127,7 @@
           <% end %>
         </tbody>
       </table>
+    </div>
     </div>
   <% end %>
 </div>

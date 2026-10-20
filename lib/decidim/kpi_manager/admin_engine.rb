@@ -12,6 +12,11 @@ module Decidim
       routes do
         resources :selections, only: [:index, :create, :destroy] do
           member { patch :refresh }
+          # Bulk actions on the checked rows of the featured list.
+          collection do
+            patch :bulk_refresh
+            delete :bulk_destroy
+          end
         end
         root to: "selections#index"
       end

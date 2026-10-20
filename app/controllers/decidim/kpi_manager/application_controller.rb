@@ -7,6 +7,8 @@ module Decidim
     # inherits from Decidim::Components::BaseController like any other.
     class ApplicationController < Decidim::Components::BaseController
       include Decidim::KpiManager::HasApiClient
+
+      helper Decidim::KpiManager::ApplicationHelper
     end
   end
 end

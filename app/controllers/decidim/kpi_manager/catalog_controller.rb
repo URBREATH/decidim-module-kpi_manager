@@ -9,6 +9,10 @@ module Decidim
     # not the author's whole catalog - plus the URL of that gallery, so
     # inserted items can link there.
     #
+    # #history returns a featured KPI's snapshotted value history, for the
+    # modal's period picker and the period charts embedded in content (see
+    # history.js), loaded apart since it can be long.
+    #
     # This lives outside Decidim::KpiManager::Engine (which is mounted per
     # component instance) because it needs to be reachable from any page,
     # regardless of which component the author is currently writing in.
@@ -23,7 +27,32 @@ module Decidim
         }
       end
 
+      # Optionally only between `from` and `to` (ISO 8601 times, `to`
+      # excluded). Only for selections of a published KPI component of this
+      # organization, i.e. those whose (latest) history the public gallery
+      # shows anyway.
+      def history
+        selection = Selection.includes(:component).find_by(id: params[:id])
+        component = selection&.component
+        return head :not_found unless component&.published? && component.organization == current_organization
+
+        render json: {
+          name: selection.name,
+          unit: selection.unit,
+          target: selection.target_value.presence&.to_f,
+          chart_type: selection.chart_type,
+          labels: I18n.t("decidim.kpi_manager.editor").transform_keys(&:to_s),
+          history: selection.history_between(parse_time(params[:from]), parse_time(params[:to]))
+        }
+      end
+
       private
+
+      def parse_time(value)
+        Time.zone.iso8601(value.to_s) if value.present?
+      rescue ArgumentError
+        nil
+      end
 
       def selections
         return [] unless component
@@ -32,7 +61,12 @@ module Decidim
       end
 
       def serialize(selection)
-        selection.to_item.merge("featured_by" => helpers.present(selection.author).name)
+        # The history itself is loaded by the KPI modal when needed (#history).
+        selection.to_item.merge(
+          "featured_by" => helpers.present(selection.author).name,
+          "selection_id" => selection.id,
+          "has_history" => selection.history.present?
+        )
       end
 
       def gallery_url
@@ -40,9 +74,7 @@ module Decidim
       end
 
       def component
-        @component ||= participatory_space&.components&.find do |candidate|
-          candidate.manifest_name == "kpi_manager" && candidate.published?
-        end
+        @component ||= Decidim::KpiManager::Gallery.component_for(participatory_space)
       end
 
       def participatory_space

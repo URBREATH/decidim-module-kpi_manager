@@ -32,8 +32,8 @@ const toggleCard = (card) => {
 document.addEventListener("click", (event) => {
   // Once expanded, the map becomes a real navigable map (dragging, its own
   // zoom control): clicks/drags on it should pan/zoom it, not collapse the
-  // card back.
-  if (event.target.closest(".kpi-manager-card__map--interactive")) {
+  // card back. Same for the chart (tooltips, legend toggles).
+  if (event.target.closest(".kpi-manager-card__map--interactive, [data-kpi-manager-chart]")) {
     return;
   }
 

@@ -13,6 +13,11 @@
 // down to the remixicon icons - whose sprite path (content-hashed by the
 // asset pipeline) is read off any icon already on the page rather than
 // hardcoded.
+//
+// It also brings along inline_chart.js, which draws the chart after the
+// links inserted as the chart of a period.
+
+import "src/decidim/kpi_manager/inline_chart";
 
 const parsed = new WeakMap();
 
@@ -25,9 +30,11 @@ const parseLink = (link) => {
 
   try {
     const raw = new URL(link.getAttribute("href"), window.location.origin).searchParams.get("kpi") || "";
-    const [marker, name, description, value, unit, source, recordedAt, featuredBy] = raw.split("|");
+    // measuredAt is only set for a past measurement, period for the chart
+    // of a period (see editor_button.js).
+    const [marker, name, description, value, unit, source, recordedAt, featuredBy, measuredAt, period] = raw.split("|");
 
-    data = marker === "KPI" ? { name, description, value, unit, source, recordedAt, featuredBy } : null;
+    data = marker === "KPI" ? { name, description, value, unit, source, recordedAt, featuredBy, measuredAt, period } : null;
   } catch {
     data = null;
   }
@@ -84,7 +91,11 @@ const openCard = (link) => {
       </p>
       <div class="card__grid-metadata">
         ${data.source ? `<div>${iconSvg("map-pin-line")}${escapeHtml(data.source)}</div>` : ""}
-        ${data.recordedAt ? `<div>${iconSvg("calendar-line")}Last update: ${escapeHtml(data.recordedAt)}</div>` : ""}
+        ${data.measuredAt
+    ? `<div>${iconSvg("time-line")}Measured at: ${escapeHtml(data.measuredAt)}</div>`
+    : ""}
+        ${data.period ? `<div>${iconSvg("bar-chart-2-line")}Period: ${escapeHtml(data.period)}</div>` : ""}
+        ${data.recordedAt && !data.measuredAt ? `<div>${iconSvg("calendar-line")}Last update: ${escapeHtml(data.recordedAt)}</div>` : ""}
       </div>
       ${data.featuredBy ? `<p class="text-sm text-gray-2 mt-2">${iconSvg("user-line", "inline-block")} ${escapeHtml(data.featuredBy)}</p>` : ""}
     </div>
